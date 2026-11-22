@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "title": "A-CureXpress for partners",
+    "description": "Join A-CureXpress as a doctor, clinic or medical shop. Partner onboarding is coming soon."
+  },
+  "header": {
+    "skipToContent": "Skip to content",
+    "login": "Partner login"
+  },
+  "landing": {
+    "title": "Join A-CureXpress as a doctor, clinic or medical shop",
+    "intro": "Partner onboarding is not open yet. This page is a placeholder while we build sign-up and verification.",
+    "comingSoon": "Coming soon",
+    "cards": {
+      "doctor": {
+        "title": "Doctors",
+        "body": "Create a profile, set your consultation hours and get verified by A-CureXpress."
+      },
+      "clinic": {
+        "title": "Clinics",
+        "body": "List your clinic, add your doctors and manage appointments in one place."
+      },
+      "shop": {
+        "title": "Medical shops",
+        "body": "Put your shop on the A-CureXpress map so patients nearby can find you."
+      }
+    }
+  },
+  "login": {
+    "metaTitle": "Partner login",
+    "title": "Partner login",
+    "body": "Partner sign-in is coming soon. No account details are collected on this page.",
+    "back": "Back to partner home"
+  }
+}

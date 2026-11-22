@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "title": "A-CureXpress admin"
+  },
+  "header": {
+    "skipToContent": "Skip to content",
+    "badge": "Staff only"
+  },
+  "login": {
+    "metaTitle": "Admin login",
+    "title": "Admin login",
+    "body": "Staff sign-in is coming soon. No account details are collected on this page.",
+    "mfaNote": "Two-step verification will be required for every admin account."
+  }
+}

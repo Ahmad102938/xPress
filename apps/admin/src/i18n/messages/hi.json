@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "status": "TODO-review: first-pass Hindi translation. Needs review by a native speaker and HCQ Care before launch."
+  },
+  "metadata": {
+    "title": "A-CureXpress एडमिन"
+  },
+  "header": {
+    "skipToContent": "मुख्य सामग्री पर जाएँ",
+    "badge": "केवल स्टाफ़"
+  },
+  "login": {
+    "metaTitle": "एडमिन लॉगिन",
+    "title": "एडमिन लॉगिन",
+    "body": "स्टाफ़ साइन-इन जल्द आ रहा है। इस पेज पर कोई अकाउंट जानकारी नहीं ली जाती।",
+    "mfaNote": "हर एडमिन अकाउंट के लिए दो-चरण वेरिफ़िकेशन ज़रूरी होगा।"
+  }
+}

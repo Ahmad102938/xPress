@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+/* Brand tokens, theme, base styles and shared utilities (bg-hero, scroller, panel, ...). */
+@import "@acurexpress/ui/styles.css";

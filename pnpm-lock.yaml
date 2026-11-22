@@ -30,6 +30,170 @@ importers:
         specifier: 2.11.10
         version: 2.11.10
 
+  apps/admin:
+    dependencies:
+      '@acurexpress/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@acurexpress/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@acurexpress/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: ^1.77.0
+        version: 1.77.0(@types/react@19.3.0)(react@19.3.0)
+      next:
+        specifier: 16.4.6
+        version: 16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next-intl:
+        specifier: ^4.15.3
+        version: 4.15.3(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-dom:
+        specifier: 19.3.0
+        version: 19.3.0(react@19.3.0)
+    devDependencies:
+      '@acurexpress/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@axe-core/playwright':
+        specifier: ^4.14.0
+        version: 4.14.0(playwright-core@1.65.1)
+      '@playwright/test':
+        specifier: ^1.65.1
+        version: 1.65.1
+      '@tailwindcss/turbopack':
+        specifier: 4.3.3
+        version: 4.3.3
+      '@testing-library/dom':
+        specifier: ^10.4.2
+        version: 10.4.2
+      '@testing-library/jest-dom':
+        specifier: ^8.0.0
+        version: 8.0.0(@testing-library/dom@10.4.2)(vitest@5.1.1(@types/node@20.19.43)(jsdom@31.0.1(@noble/hashes@1.8.0))(vite@8.3.8(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.1)))
+      '@testing-library/react':
+        specifier: ^16.3.3
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@types/node':
+        specifier: ^20
+        version: 20.19.43
+      '@types/react':
+        specifier: ^19
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: ^6.3.0
+        version: 6.3.0(vite@8.3.8(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.1))
+      eslint:
+        specifier: ^9
+        version: 9.39.5(jiti@2.7.0)
+      jsdom:
+        specifier: ^31.0.1
+        version: 31.0.1(@noble/hashes@1.8.0)
+      shadcn:
+        specifier: ^4.23.0
+        version: 4.23.0
+      tailwindcss:
+        specifier: 4.3.3
+        version: 4.3.3
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^5.1.1
+        version: 5.1.1(@types/node@20.19.43)(jsdom@31.0.1(@noble/hashes@1.8.0))(vite@8.3.8(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.1))
+
+  apps/partner:
+    dependencies:
+      '@acurexpress/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@acurexpress/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@acurexpress/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: ^1.77.0
+        version: 1.77.0(@types/react@19.3.0)(react@19.3.0)
+      next:
+        specifier: 16.4.6
+        version: 16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next-intl:
+        specifier: ^4.15.3
+        version: 4.15.3(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-dom:
+        specifier: 19.3.0
+        version: 19.3.0(react@19.3.0)
+    devDependencies:
+      '@acurexpress/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@axe-core/playwright':
+        specifier: ^4.14.0
+        version: 4.14.0(playwright-core@1.65.1)
+      '@playwright/test':
+        specifier: ^1.65.1
+        version: 1.65.1
+      '@tailwindcss/turbopack':
+        specifier: 4.3.3
+        version: 4.3.3
+      '@testing-library/dom':
+        specifier: ^10.4.2
+        version: 10.4.2
+      '@testing-library/jest-dom':
+        specifier: ^8.0.0
+        version: 8.0.0(@testing-library/dom@10.4.2)(vitest@5.1.1(@types/node@20.19.43)(jsdom@31.0.1(@noble/hashes@1.8.0))(vite@8.3.8(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.1)))
+      '@testing-library/react':
+        specifier: ^16.3.3
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@types/node':
+        specifier: ^20
+        version: 20.19.43
+      '@types/react':
+        specifier: ^19
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: ^6.3.0
+        version: 6.3.0(vite@8.3.8(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.1))
+      eslint:
+        specifier: ^9
+        version: 9.39.5(jiti@2.7.0)
+      jsdom:
+        specifier: ^31.0.1
+        version: 31.0.1(@noble/hashes@1.8.0)
+      shadcn:
+        specifier: ^4.23.0
+        version: 4.23.0
+      tailwindcss:
+        specifier: 4.3.3
+        version: 4.3.3
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^5.1.1
+        version: 5.1.1(@types/node@20.19.43)(jsdom@31.0.1(@noble/hashes@1.8.0))(vite@8.3.8(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.1))
+
   apps/web:
     dependencies:
       '@acurexpress/core':
@@ -52,7 +216,7 @@ importers:
         version: 16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       next-intl:
         specifier: ^4.15.3
-        version: 4.15.3(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+        version: 4.15.3(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       react:
         specifier: 19.3.0
         version: 19.3.0
@@ -246,7 +410,7 @@ importers:
         version: 16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       next-intl:
         specifier: ^4.15.3
-        version: 4.15.3(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+        version: 4.15.3(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       react:
         specifier: 19.3.0
         version: 19.3.0
@@ -8053,7 +8217,7 @@ snapshots:
 
   next-intl-swc-plugin-extractor@4.15.1: {}
 
-  next-intl@4.15.3(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0):
+  next-intl@4.15.3(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@babel/core@7.29.13)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0):
     dependencies:
       '@eloqnt/config': 0.1.2
       '@eloqnt/extractor': 0.1.0(@swc/helpers@0.5.23)
