@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  app:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Flags stay off in CI (the default). No remote credentials are used here.
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+  # ---------------------------------------------------------------------------
+  # TODO(database): enable once the first migration lands. See docs/SUPABASE.md §14.
+  # Runs against a throwaway LOCAL Supabase stack inside the runner. No remote credentials.
+  #
+  # database:
+  #   name: Database (local stack)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v4
+  #     - uses: actions/setup-node@v4
+  #       with: { node-version-file: .nvmrc, cache: pnpm }
+  #     - run: pnpm install --frozen-lockfile
+  #     - run: pnpm supabase start
+  #     - run: pnpm supabase db reset
+  #     - run: pnpm supabase test db
+  #     - run: pnpm supabase db lint
+  #     - name: Types are up to date
+  #       run: pnpm db:types && git diff --exit-code src/lib/supabase/database.types.ts
+  #
+  # TODO(deploy): staging deploy after merge to main (migrations via `supabase db push`
+  # with the STAGING project ref and secrets from GitHub environments). Production deploy
+  # requires manual approval by the project lead. Do not add credentials to this file.
+  #
+  # TODO(e2e): add `pnpm exec playwright install --with-deps chromium && pnpm test:e2e`
+  # once the runtime budget is agreed.
+  # ---------------------------------------------------------------------------
