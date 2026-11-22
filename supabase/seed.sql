@@ -1,0 +1,3 @@
+-- A-CureXpress local seed data.
+-- Synthetic data only: obviously fake names, numbers and addresses. Never copy production data here.
+-- Intentionally empty until the first migrations land (see docs/SUPABASE.md section 7, "Planned migration order").
