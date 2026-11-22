@@ -1,12 +1,11 @@
 import { CalendarClock } from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { Button } from "@acurexpress/ui";
+import { Button, DoctorBadge } from "@acurexpress/ui";
 import { Link } from "@/i18n/navigation";
 import type { DoctorSummary } from "@/lib/mock/types";
 import { formatInr } from "@acurexpress/core";
 import { ModeChips } from "./mode-chip";
-import { DoctorBadge } from "@acurexpress/ui";
 
 function formatSlotTime(time: string, locale: string) {
   // Slots are stored as IST wall-clock times in the mock. Real data will be UTC timestamptz (§24 rule 9).
