@@ -1,0 +1,291 @@
+{
+  "metadata": {
+    "title": "A-CureXpress: book verified doctors, clinics and online consultations",
+    "description": "Find doctors and clinics near you, book a clinic visit or consult online, and find trusted medical shops.",
+    "comingSoonTitle": "{page}: coming soon"
+  },
+  "common": {
+    "brand": "A-CureXpress",
+    "homeLink": "A-CureXpress home",
+    "viewAll": "View all",
+    "sampleData": "Sample listings for preview. Not real doctors, clinics or prices.",
+    "sampleBadge": "Sample",
+    "skipToContent": "Skip to main content",
+    "comingSoon": "Coming soon",
+    "comingSoonBody": "We are building this page. Please check back soon.",
+    "backHome": "Back to home"
+  },
+  "emergency": {
+    "message": "In an emergency call 112 or go to the nearest hospital. This is not an emergency service.",
+    "dismiss": "Dismiss emergency notice"
+  },
+  "header": {
+    "chooseLocation": "Choose city or pincode",
+    "locationDialogTitle": "Your location",
+    "locationLabel": "City or pincode",
+    "locationPlaceholder": "e.g. 302001",
+    "locationNote": "Location search is coming soon. Results will show your area once it is ready.",
+    "locationClose": "Close",
+    "login": "Login / Sign up",
+    "loginShort": "Login",
+    "language": "Language",
+    "primaryNav": "Main"
+  },
+  "search": {
+    "label": "Search",
+    "placeholder": "Search doctors, clinics, specialities",
+    "placeholderWithMedicines": "Search doctors, clinics, specialities, medicines",
+    "submit": "Search",
+    "suggestions": "Suggestions",
+    "groupSpecialities": "Specialities",
+    "groupDoctors": "Doctors",
+    "groupClinics": "Clinics",
+    "groupMedicines": "Medicines",
+    "medicinesHint": "Search medicines",
+    "noResults": "No suggestions. Press Enter to search.",
+    "resultsCount": "{count, plural, =0 {No suggestions} one {# suggestion} other {# suggestions}} available"
+  },
+  "nav": {
+    "bottomLabel": "Quick navigation",
+    "home": "Home",
+    "doctors": "Doctors",
+    "consult": "Consult",
+    "shops": "Shops",
+    "account": "Account"
+  },
+  "quickActions": {
+    "title": "What do you need today?",
+    "clinicVisit": {
+      "label": "Book a clinic visit",
+      "helper": "See a doctor in person"
+    },
+    "onlineConsult": {
+      "label": "Online consultation",
+      "helper": "Video or audio from home"
+    },
+    "findDoctor": {
+      "label": "Find a doctor",
+      "helper": "By speciality or name"
+    },
+    "nearbyShops": {
+      "label": "Nearby medical shops",
+      "helper": "On a map near you"
+    },
+    "medicines": {
+      "label": "Medicines",
+      "helper": "Order from licensed pharmacies"
+    },
+    "healthAssistant": {
+      "label": "Health assistant",
+      "helper": "AI guidance, not a diagnosis"
+    }
+  },
+  "hero": {
+    "label": "Highlights",
+    "slideLabel": "Slide {current} of {total}",
+    "goToSlide": "Go to slide {number}",
+    "previous": "Previous slide",
+    "next": "Next slide",
+    "pause": "Pause automatic slides",
+    "play": "Play automatic slides",
+    "verifiedDoctor": {
+      "title": "Book a verified doctor in minutes",
+      "body": "Check credentials, fees and the next free slot before you book.",
+      "cta": "Find a doctor",
+      "imageAlt": "Illustration of a doctor next to a shield with a tick"
+    },
+    "consultOnline": {
+      "title": "Consult online from home",
+      "body": "Video or audio consultations with doctors who offer online care.",
+      "cta": "Consult online",
+      "imageAlt": "Illustration of a phone showing a video call with a doctor"
+    },
+    "shops": {
+      "title": "Find trusted medical shops near you",
+      "body": "Partner shops with checked addresses, hours and directions.",
+      "cta": "Find shops",
+      "imageAlt": "Illustration of a medical shop with a map pin"
+    }
+  },
+  "trust": {
+    "label": "Why patients choose A-CureXpress",
+    "verifiedDoctors": "Verified doctors",
+    "partnerClinics": "Partner clinics",
+    "pilotDistricts": "Pilot district",
+    "privacy": "Secure and private",
+    "privacyDetail": "Your health data stays private",
+    "placeholderNote": "Figures are placeholders until live data is connected."
+  },
+  "specialities": {
+    "title": "Browse by speciality",
+    "subtitle": "Find the right doctor for your concern",
+    "names": {
+      "general-physician": "General physician",
+      "paediatrics": "Child specialist",
+      "gynaecology": "Women's health",
+      "dermatology": "Skin and hair",
+      "orthopaedics": "Bones and joints",
+      "ent": "Ear, nose, throat",
+      "dental": "Dental care",
+      "cardiology": "Heart care",
+      "eye-care": "Eye care",
+      "psychiatry": "Mental health"
+    }
+  },
+  "doctors": {
+    "title": "Verified doctors near you",
+    "subtitle": "Browse freely. Log in only when you book.",
+    "photoAlt": "Photo placeholder for {name}",
+    "experience": "{years} years experience",
+    "languages": "Speaks",
+    "fee": "Consultation fee",
+    "nextSlot": "Next available",
+    "today": "Today, {time}",
+    "tomorrow": "Tomorrow, {time}",
+    "book": "Book",
+    "bookLabel": "Book an appointment with {name}",
+    "online": "Online",
+    "atClinic": "At clinic"
+  },
+  "badges": {
+    "verified": "A-CureXpress Verified",
+    "verifiedHint": "Registration number checked, documents checked, agreement signed",
+    "registered": "Registered Doctor",
+    "registeredHint": "Approved profile. Full verification not yet complete"
+  },
+  "rating": {
+    "label": "Rated {rating} out of 5",
+    "count": "({count, plural, one {# rating} other {# ratings}})"
+  },
+  "clinics": {
+    "title": "Partner clinics",
+    "subtitle": "Clinics with one or many doctors, each bookable separately",
+    "photoAlt": "Photo placeholder for {name}",
+    "doctors": "{count, plural, one {# doctor} other {# doctors}}",
+    "view": "View clinic"
+  },
+  "shopsMap": {
+    "title": "Medical shops near you",
+    "body": "See partner medical shops on a map, with verified addresses, opening hours and directions.",
+    "stockNote": "Medicine availability: please confirm with the shop.",
+    "cta": "Open map",
+    "imageAlt": "Illustration of a street map with shop pins. Not a real map."
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "find": {
+      "title": "Find",
+      "body": "Search by speciality, doctor, clinic or area."
+    },
+    "book": {
+      "title": "Book",
+      "body": "Pick a mode and a free slot. See the fee and policy first."
+    },
+    "consult": {
+      "title": "Consult or visit",
+      "body": "Join a video call, or visit the clinic at your time."
+    }
+  },
+  "whyTrust": {
+    "title": "Why you can trust us",
+    "verifiedTitle": "What “Verified” means",
+    "verifiedBody": "We check the doctor's medical registration number and documents, and the doctor signs our agreement. Only then do we show the A-CureXpress Verified badge.",
+    "registeredTitle": "What “Registered” means",
+    "registeredBody": "Our team approved the profile, but full verification is not complete yet. We never show both labels the same way.",
+    "licencesTitle": "Licences checked",
+    "licencesBody": "Partner shops and pharmacies hold their own licences. We check them during approval and when they expire.",
+    "privacyTitle": "Private health data",
+    "privacyBody": "Only you and your treating doctor can see your health records. Wider sharing needs your consent.",
+    "paymentsTitle": "Secure payments",
+    "paymentsBody": "Payments are confirmed on our servers with the payment provider, never only in your browser.",
+    "scopeNote": "Verification checks credentials and documents. It does not guarantee a clinical outcome.",
+    "cta": "Read how we keep you safe"
+  },
+  "promos": {
+    "consult": {
+      "title": "Talk to a doctor online",
+      "body": "Choose a doctor who offers online consultations and join a secure video or audio call from home.",
+      "prescriptionNote": "If the doctor finds it appropriate, you get a digital prescription after the call.",
+      "cta": "Consult online"
+    },
+    "ai": {
+      "title": "AI Health Consultant",
+      "body": "Ask general health questions in everyday language and get help choosing your next step.",
+      "disclaimer": "AI-generated information is for general guidance only and is not a medical diagnosis or a substitute for a qualified healthcare professional.",
+      "cta": "Start a chat"
+    }
+  },
+  "stories": {
+    "title": "Patient stories",
+    "subtitle": "Sample layout. These are not real reviews.",
+    "sampleText": "Sample story text. Real stories will appear here only after a patient agrees to share and our team reviews them.",
+    "sampleAuthor": "Sample patient"
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "items": {
+      "q1": {
+        "q": "Do I need to log in to browse doctors?",
+        "a": "No. You can browse doctors, clinics and specialities without an account. We ask you to log in only when you book."
+      },
+      "q2": {
+        "q": "What is the difference between Verified and Registered?",
+        "a": "A Verified doctor has had their registration and documents checked and has signed our agreement. A Registered doctor has an approved profile but has not completed full verification yet."
+      },
+      "q3": {
+        "q": "Can I consult a doctor online?",
+        "a": "Yes, with doctors who have turned on online consultations. Each doctor's profile shows whether they offer online, clinic visits or both."
+      },
+      "q4": {
+        "q": "How do I cancel or reschedule a booking?",
+        "a": "You will see the cancellation and reschedule rules before you confirm. You can change a booking from My appointments once booking opens."
+      },
+      "q5": {
+        "q": "Is my health information safe?",
+        "a": "Your records are visible only to you and your treating doctor. Wider sharing needs your recorded consent."
+      },
+      "q6": {
+        "q": "Is A-CureXpress an emergency service?",
+        "a": "No. In an emergency call 112 or go to the nearest hospital."
+      }
+    }
+  },
+  "footer": {
+    "company": "Company",
+    "about": "About us",
+    "contact": "Contact",
+    "trust": "Trust and safety",
+    "legal": "Legal",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "refund": "Refund policy",
+    "grievance": "Grievance officer",
+    "partners": "For partners",
+    "forDoctors": "For doctors",
+    "forClinics": "For clinics",
+    "forShops": "For medical shops",
+    "disclaimer": "A-CureXpress does not provide emergency care. In an emergency call 112.",
+    "copyright": "© {year} HCQ Care Private Limited. All rights reserved."
+  },
+  "pages": {
+    "doctors": "Doctors",
+    "consult": "Online consultation",
+    "shops": "Medical shops",
+    "login": "Login / Sign up",
+    "trust": "Trust and safety",
+    "about": "About us",
+    "contact": "Contact",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "refund-policy": "Refund policy",
+    "grievance": "Grievance officer",
+    "for-doctors": "For doctors",
+    "for-clinics": "For clinics",
+    "for-shops": "For medical shops",
+    "specialities": "Specialities",
+    "clinics": "Clinics",
+    "account": "Account",
+    "medicines": "Medicines",
+    "health-assistant": "AI Health Consultant"
+  }
+}
