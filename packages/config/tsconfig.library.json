@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "A-CureXpress internal package (consumed as source)",
+  "extends": "./tsconfig.base.json"
+}
