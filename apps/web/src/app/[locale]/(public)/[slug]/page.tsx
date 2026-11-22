@@ -5,7 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
-import { getFlags, type FlagName } from "@/lib/flags";
+import { getFlags, type FlagName } from "@acurexpress/core";
 
 /**
  * "Coming soon" stubs so no link on the site is dead. A real page at the same path (for example

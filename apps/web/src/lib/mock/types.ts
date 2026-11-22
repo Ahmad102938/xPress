@@ -4,10 +4,12 @@
  * and server-side views (doctor visibility and badge logic lives in the database, §24 rule 4).
  */
 
-export type ConsultationMode = "online" | "clinic";
+import type { BadgeType } from "@acurexpress/core";
 
-/** Public badge. Only these two levels exist; pending/rejected/suspended doctors are never listed. */
-export type BadgeType = "verified" | "registered";
+/** Public badge, defined in @acurexpress/core. */
+export type { BadgeType };
+
+export type ConsultationMode = "online" | "clinic";
 
 export type SpecialitySlug =
   | "general-physician"

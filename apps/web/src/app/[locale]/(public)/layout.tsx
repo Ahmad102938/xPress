@@ -4,7 +4,7 @@ import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import type { Locale } from "@/i18n/routing";
-import { getFlags } from "@/lib/flags";
+import { getFlags } from "@acurexpress/core";
 
 /** Shared shell for visitor pages: emergency bar, sticky header, footer, mobile bottom nav. */
 export default async function PublicLayout({ children, params }: LayoutProps<"/[locale]">) {

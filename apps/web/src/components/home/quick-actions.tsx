@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import type { Flags } from "@/lib/flags";
+import type { Flags } from "@acurexpress/core";
 
 type ActionKey =
   "clinicVisit" | "onlineConsult" | "findDoctor" | "nearbyShops" | "medicines" | "healthAssistant";

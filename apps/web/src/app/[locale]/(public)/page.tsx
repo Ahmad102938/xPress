@@ -15,7 +15,7 @@ import { SpecialityGrid } from "@/components/home/speciality-grid";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { WhyTrust } from "@/components/home/why-trust";
 import type { Locale } from "@/i18n/routing";
-import { getFlags } from "@/lib/flags";
+import { getFlags } from "@acurexpress/core";
 
 /**
  * Signed-out Home. Discovery page, not a product grid. All data is typed mock data (src/lib/mock).

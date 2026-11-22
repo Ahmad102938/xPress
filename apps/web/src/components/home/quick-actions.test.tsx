@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { parseFlags } from "@/lib/flags";
+import { parseFlags } from "@acurexpress/core";
 import { renderWithIntl } from "@/test/render";
 import { QuickActions } from "./quick-actions";
 

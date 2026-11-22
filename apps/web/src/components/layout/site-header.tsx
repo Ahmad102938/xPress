@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { getPathname, Link } from "@/i18n/navigation";
-import type { Flags } from "@/lib/flags";
+import type { Flags } from "@acurexpress/core";
 import { sampleClinics, sampleDoctors, specialities } from "@/lib/mock";
 import { LanguageSwitcher } from "./language-switcher";
 import { LocationPicker } from "./location-picker";

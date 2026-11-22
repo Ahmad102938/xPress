@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import type { DoctorSummary } from "@/lib/mock/types";
-import { formatInr } from "@/lib/utils";
+import { formatInr } from "@acurexpress/core";
 import { ModeChips } from "./mode-chip";
 import { DoctorBadge } from "./verification-badge";
 

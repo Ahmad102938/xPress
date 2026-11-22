@@ -2,7 +2,7 @@ import { ArrowRight, Building2, Stethoscope, Store, type LucideIcon } from "luci
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import type { Flags } from "@/lib/flags";
+import type { Flags } from "@acurexpress/core";
 
 type Key = "doctor" | "clinic" | "shop";
 

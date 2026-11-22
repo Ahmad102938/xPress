@@ -1,0 +1,25 @@
+{
+  "name": "@acurexpress/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Feature flags, constants, zod schemas and pure domain helpers.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@acurexpress/config": "workspace:*",
+    "@types/node": "^20",
+    "eslint": "^9",
+    "typescript": "^5",
+    "vitest": "^5.1.1"
+  }
+}

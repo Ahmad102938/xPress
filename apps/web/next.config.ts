@@ -5,7 +5,7 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // Internal workspace packages ship TypeScript source; Next compiles them.
-  transpilePackages: ["@acurexpress/db"],
+  transpilePackages: ["@acurexpress/core", "@acurexpress/db"],
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,

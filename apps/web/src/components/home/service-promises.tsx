@@ -12,7 +12,7 @@ import {
   type PromiseKey,
   type PromiseTone,
 } from "@/config/service-promises";
-import { formatInr } from "@/lib/utils";
+import { formatInr } from "@acurexpress/core";
 
 const icons: Record<PromiseKey, ComponentType<SVGProps<SVGSVGElement>>> = {
   freeDelivery: DeliveryTruckIcon,

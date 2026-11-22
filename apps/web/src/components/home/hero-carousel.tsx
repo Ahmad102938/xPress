@@ -19,7 +19,7 @@ import { useTranslations } from "next-intl";
 import { BannerCarousel } from "@/components/ui/banner-carousel";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import type { Flags } from "@/lib/flags";
+import type { Flags } from "@acurexpress/core";
 
 type SlideKey = "verifiedDoctor" | "consultOnline" | "shops";
 

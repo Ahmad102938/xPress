@@ -2,7 +2,7 @@ import { ArrowRight, Bot, Video } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import type { Flags } from "@/lib/flags";
+import type { Flags } from "@acurexpress/core";
 
 /** Online consultation strip. The e-prescription line shows only when online prescribing is on. */
 export function ConsultPromo({ flags }: { flags: Flags }) {
