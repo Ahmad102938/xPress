@@ -21,6 +21,43 @@ const commonIgnores = [
   "**/database.types.ts",
 ];
 
+/*
+ * Workspace boundaries (CLAUDE.md "Package boundaries"):
+ *  - apps import only from packages, never from each other;
+ *  - packages never import from apps;
+ *  - everyone imports a package through its declared entry points, never its src/ internals.
+ */
+const APP_PACKAGES = ["@acurexpress/web", "@acurexpress/partner", "@acurexpress/admin"];
+
+const noAppImports = {
+  group: [...APP_PACKAGES, ...APP_PACKAGES.map((name) => `${name}/*`), "**/apps/**"],
+  message:
+    "Workspace boundary: never import from an app. Move shared code into a package under packages/.",
+};
+
+const noDeepPackageImports = {
+  group: ["@acurexpress/*/src", "@acurexpress/*/src/**", "**/packages/**"],
+  message:
+    "Workspace boundary: import a package by its name and public entry points (its index.ts or package.json exports), not its files.",
+};
+
+const noAppAlias = {
+  group: ["@/*"],
+  message:
+    "Workspace boundary: `@/` is an app-only alias. Packages use relative imports inside the package.",
+};
+
+export const appBoundaryRule = {
+  "no-restricted-imports": ["error", { patterns: [noAppImports, noDeepPackageImports] }],
+};
+
+export const libraryBoundaryRule = {
+  "no-restricted-imports": [
+    "error",
+    { patterns: [noAppImports, noDeepPackageImports, noAppAlias] },
+  ],
+};
+
 /**
  * Flat config for a Next.js app (apps/*).
  * @param {{ ignores?: string[] }} [options]
@@ -31,6 +68,7 @@ export function nextAppConfig({ ignores = [] } = {}) {
     ...nextTs,
     prettier,
     shared,
+    { rules: appBoundaryRule },
     globalIgnores([...commonIgnores, ...ignores]),
   ];
 }
@@ -46,7 +84,7 @@ export function libraryConfig({ ignores = [] } = {}) {
     ...nextTs,
     prettier,
     shared,
-    { rules: { "@next/next/no-html-link-for-pages": "off" } },
+    { rules: { "@next/next/no-html-link-for-pages": "off", ...libraryBoundaryRule } },
     globalIgnores([...commonIgnores, ...ignores]),
   ];
 }

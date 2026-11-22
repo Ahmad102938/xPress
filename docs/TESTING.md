@@ -29,8 +29,8 @@ If you finish a task and there is no new or changed test file in the diff, you a
 | Zod schemas and server actions | Vitest | Valid input passes, each invalid field fails with the right error, unauthorised caller is rejected | next to the file |
 | React components | Vitest + Testing Library | Renders each state (loading, empty, error, success), user interaction, labels and roles, the feature-flag on and off versions | `*.test.tsx` next to the component |
 | Database: tables, RLS, functions, constraints | pgTAP (`pnpm db:test`) | See section 3. Mandatory for every migration | `supabase/tests/` |
-| Full user flows | Playwright | Key journeys end to end, at 360px and 1280px | `e2e/` |
-| Accessibility | axe via Playwright | Zero critical or serious violations on every new page | `e2e/` |
+| Full user flows | Playwright | Key journeys end to end, at 360px and 1280px | `apps/<app>/e2e/` |
+| Accessibility | axe via Playwright | Zero critical or serious violations on every new page | `apps/<app>/e2e/` |
 | Integrations (payments, SMS, video, maps) | Vitest with mocks or provider test mode | Success, failure, timeout, duplicate webhook, bad signature | next to the adapter |
 
 Keep most tests at the cheap layers (logic, components, database). Use Playwright for the journeys that matter most, not for every detail.
@@ -80,7 +80,7 @@ These are the rules that must never break. Any change near them needs tests for 
 
 ## 6. Test data and mocks
 
-- Fake data lives in one place: `src/lib/mock` for the UI and `supabase/seed.sql` plus test-local fixtures for the database. Names, phones and emails are obviously fake (for example `test.patient@example.test`, phone `9000000001`).
+- Fake data lives in one place: `apps/web/src/lib/mock` for the UI and `supabase/seed.sql` plus test-local fixtures for the database. Names, phones and emails are obviously fake (for example `test.patient@example.test`, phone `9000000001`).
 - Create small factory helpers (`makeDoctor()`, `makeBooking()`) with sensible defaults and overridable fields. Do not copy-paste large objects.
 - Mock only at the boundary (the payment, SMS, video or maps adapter), never the code under test.
 - Time: inject a clock. Money: store as integer paise. Dates: test IST and UTC boundaries.
@@ -103,9 +103,10 @@ These are the rules that must never break. Any change near them needs tests for 
 
 | Command | Purpose |
 |---|---|
-| `pnpm test` | Run unit and component tests (Vitest) |
+| `pnpm test` | Run unit and component tests (Vitest) in every app and package (from the repo root, via turbo) |
 | `pnpm test -- --coverage` | Same, with the coverage report |
-| `pnpm test:e2e` | Run Playwright end to end and axe tests |
+| `pnpm test:e2e` | Run Playwright end to end and axe tests for every app (web, partner, admin) |
+| `pnpm turbo run test --filter=@acurexpress/<name>` | Unit tests for one app or package (same with `test:e2e`) |
 | `pnpm db:test` | Run the pgTAP database tests (needs local Supabase running) |
 | `pnpm lint` and `pnpm typecheck` | Static checks |
 

@@ -12,14 +12,48 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # Flags stay off in CI (the default). No remote credentials are used anywhere in this file.
+  NEXT_TELEMETRY_DISABLED: "1"
+  TURBO_TELEMETRY_DISABLED: "1"
+
 jobs:
-  app:
+  checks:
     name: Lint, typecheck, test, build
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      # Flags stay off in CI (the default). No remote credentials are used here.
-      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so `turbo --affected` can compare a PR with its base branch.
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Format check
+        run: pnpm format:check
+
+      # Pull requests check only the workspaces a change affects (plus their dependents);
+      # pushes to main check everything.
+      - name: Lint, typecheck, test, build
+        run: pnpm turbo run lint typecheck test build ${{ github.event_name == 'pull_request' && '--affected' || '' }}
+
+  e2e:
+    name: E2E (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [web, partner, admin]
     steps:
       - uses: actions/checkout@v4
 
@@ -33,24 +67,25 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Lint
-        run: pnpm lint
+      - name: Install Playwright Chromium
+        run: pnpm --filter @acurexpress/${{ matrix.app }} exec playwright install --with-deps chromium
 
-      - name: Format check
-        run: pnpm format:check
+      # Builds the app, starts it and runs Playwright + axe against the production build.
+      - name: Playwright
+        run: pnpm turbo run test:e2e --filter=@acurexpress/${{ matrix.app }}
 
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Unit tests
-        run: pnpm test
-
-      - name: Build
-        run: pnpm build
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.app }}
+          path: apps/${{ matrix.app }}/playwright-report
+          retention-days: 7
 
   # ---------------------------------------------------------------------------
   # TODO(database): enable once the first migration lands. See docs/SUPABASE.md §14.
   # Runs against a throwaway LOCAL Supabase stack inside the runner. No remote credentials.
+  # One database for all three apps, so this job is not filtered by app.
   #
   # database:
   #   name: Database (local stack)
@@ -68,10 +103,10 @@ jobs:
   #     - name: Types are up to date
   #       run: pnpm db:types && git diff --exit-code packages/db/src/database.types.ts
   #
-  # TODO(deploy): staging deploy after merge to main (migrations via `supabase db push`
-  # with the STAGING project ref and secrets from GitHub environments). Production deploy
-  # requires manual approval by the project lead. Do not add credentials to this file.
-  #
-  # TODO(e2e): add `pnpm exec playwright install --with-deps chromium && pnpm test:e2e`
-  # once the runtime budget is agreed.
+  # TODO(deploy): order is fixed. See docs/DEPLOYMENT.md.
+  #   1. After merge to main: migrate STAGING first (`supabase db push` with the staging project
+  #      ref and secrets from a GitHub environment), then let Vercel deploy the apps to staging.
+  #   2. Production: manual approval by the project lead, migrate PRODUCTION, then promote the
+  #      app deployments. Migrations must be backward compatible with the apps still running.
+  #   Do not add credentials to this file.
   # ---------------------------------------------------------------------------

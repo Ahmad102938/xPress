@@ -52,7 +52,7 @@ pnpm install
 
 **2. Environment variables**
 ```bash
-cp .env.example .env.local
+cp apps/web/.env.example apps/web/.env.local   # same for apps/partner and apps/admin when you run them
 ```
 Fill the values. For local development, `pnpm supabase status` after step 3 prints the local URL and keys. Required Supabase variables:
 ```
@@ -60,7 +60,7 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=          # anon / publishable key, safe for the browser
 SUPABASE_SERVICE_ROLE_KEY=              # server only. NEVER expose to the browser
 ```
-Other variables (payments, SMS, maps, video, AI) are listed with comments in `.env.example`. Use test or sandbox keys only.
+Other variables (payments, SMS, maps, video, AI) are listed with comments in `apps/web/.env.example` (the root `.env.example` lists every app's variables). Use test or sandbox keys only.
 
 **3. Start local Supabase and build the database**
 ```bash
@@ -72,7 +72,7 @@ pnpm supabase status          # local URLs and keys
 **4. Generate types and run the app**
 ```bash
 pnpm db:types                 # wraps: supabase gen types typescript --local
-pnpm dev
+pnpm dev                      # all apps: web :3000, partner :3001, admin :3002
 ```
 
 **5. (Optional, read-only) link to staging**
@@ -225,7 +225,7 @@ How we enforce it:
 
 ## 13. Types, seeds, Edge Functions, secrets
 
-- **Types:** `pnpm db:types` writes `src/lib/supabase/database.types.ts`. Commit it. CI fails if it is out of date. Use the generated types; no `any`.
+- **Types:** `pnpm db:types` writes `packages/db/src/database.types.ts` (package `@acurexpress/db`, shared by all apps). Commit it. CI fails if it is out of date. Use the generated types; no `any`.
 - **Seeds:** `supabase/seed.sql` holds synthetic data only (fake clinics, doctors, shops, products). Use obviously fake names and numbers. Never copy production data down.
 - **Edge Functions:** live in `supabase/functions/`. Deploy through CI. Keep them thin: webhooks, integrations, scheduled work.
 - **Secrets for functions:** `pnpm supabase secrets set NAME=value` for non-production only, from your own terminal. Production secrets are set by the project lead.
