@@ -3,9 +3,9 @@ import type { NextRequest, NextResponse } from "next/server";
 import { getSupabasePublicEnv } from "./env";
 
 /**
- * Refreshes the Supabase auth session on a response produced by the proxy (src/proxy.ts).
+ * Refreshes the Supabase auth session on a response produced by the proxy (an app's src/proxy.ts).
  *
- * TODO(auth): not wired into src/proxy.ts yet. Wire it in with the auth work, after the
+ * TODO(auth): not wired into apps/web/src/proxy.ts yet. Wire it in with the auth work, after the
  * next-intl middleware has produced `response`. No queries here; session refresh only.
  */
 export async function updateSession(request: NextRequest, response: NextResponse) {

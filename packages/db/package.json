@@ -1,0 +1,36 @@
+{
+  "name": "@acurexpress/db",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Supabase clients (browser, server, proxy session refresh) and generated database types.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./server": "./src/server.ts",
+    "./middleware": "./src/middleware.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.2",
+    "zod": "^4.6.7"
+  },
+  "peerDependencies": {
+    "next": "16.4.6"
+  },
+  "devDependencies": {
+    "@acurexpress/config": "workspace:*",
+    "@types/node": "^20",
+    "eslint": "^9",
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "typescript": "^5",
+    "vitest": "^5.1.1"
+  }
+}

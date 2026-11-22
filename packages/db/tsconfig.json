@@ -1,0 +1,5 @@
+{
+  "extends": "@acurexpress/config/tsconfig.library.json",
+  "include": ["src/**/*.ts", "*.mts"],
+  "exclude": ["node_modules"]
+}

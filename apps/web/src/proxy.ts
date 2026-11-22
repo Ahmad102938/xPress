@@ -2,7 +2,7 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 
 // Locale negotiation and prefix handling.
-// TODO(auth): chain Supabase session refresh (src/lib/supabase/middleware.ts) here.
+// TODO(auth): chain Supabase session refresh (@acurexpress/db/middleware) here.
 export default createMiddleware(routing);
 
 export const config = {
