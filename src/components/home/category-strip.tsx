@@ -77,7 +77,7 @@ export function CategoryStrip({ flags }: { flags: Flags }) {
 
   return (
     <nav aria-label={t("label")} className="border-b border-line bg-panel">
-      <ul className="scroller mx-auto max-w-7xl gap-1 px-2 py-2 md:justify-between md:px-4">
+      <ul className="scroller mx-auto max-w-6xl gap-1 px-2 py-1.5 sm:gap-2 lg:justify-between lg:px-4">
         {visible.map((item) => {
           const label = item.kind === "category" ? t(item.key) : tSpeciality(item.slug);
           const href =
@@ -86,17 +86,19 @@ export function CategoryStrip({ flags }: { flags: Flags }) {
               : { pathname: "/doctors", query: { speciality: item.slug } };
           const Icon = item.icon;
           return (
-            <li key={item.kind === "category" ? item.key : item.slug} className="w-21 shrink-0">
+            <li key={item.kind === "category" ? item.key : item.slug} className="shrink-0">
               <Link
                 href={href}
-                className="group flex flex-col items-center gap-1.5 rounded-lg px-1 py-1.5 text-center"
+                className="group flex min-w-18 flex-col items-center gap-1 rounded-lg px-1.5 py-1 text-center"
               >
                 <span
-                  className={`flex size-14 items-center justify-center rounded-full ring-1 transition-transform group-hover:scale-105 ${tones[item.tone]}`}
+                  className={`flex size-11 items-center justify-center rounded-full ring-1 transition-transform group-hover:scale-105 md:size-12 ${tones[item.tone]}`}
                 >
-                  <Icon aria-hidden="true" className="size-6" />
+                  <Icon aria-hidden="true" className="size-5" />
                 </span>
-                <span className="text-[13px] leading-tight font-medium text-ink">{label}</span>
+                <span className="text-[13px] leading-tight font-medium whitespace-nowrap text-ink">
+                  {label}
+                </span>
               </Link>
             </li>
           );

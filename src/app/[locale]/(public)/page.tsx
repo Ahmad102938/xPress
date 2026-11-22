@@ -10,6 +10,7 @@ import { PatientStories } from "@/components/home/patient-stories";
 import { AiPromo, ConsultPromo } from "@/components/home/promo-bands";
 import { QuickActions } from "@/components/home/quick-actions";
 import { ShopMapTeaser } from "@/components/home/shop-map-teaser";
+import { ServicePromises } from "@/components/home/service-promises";
 import { SpecialityGrid } from "@/components/home/speciality-grid";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { WhyTrust } from "@/components/home/why-trust";
@@ -31,6 +32,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       <h1 className="sr-only">{t("title")}</h1>
       <CategoryStrip flags={flags} />
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 md:gap-6 md:py-6">
+        <ServicePromises flags={flags} />
         <HeroCarousel flags={flags} />
         <QuickActions flags={flags} />
         <TrustStrip />

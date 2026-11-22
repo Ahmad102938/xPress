@@ -95,26 +95,57 @@
       "body": "Check credentials, fees and the next free slot before you book.",
       "cta": "Find a doctor",
       "imageAlt": "Illustration of a doctor next to a shield with a tick",
-      "badge": "Verified doctors"
+      "badge": "Verified doctors",
+      "points": {
+        "p1": "Registration and documents checked",
+        "p2": "Fee and next free slot shown before you pay",
+        "p3": "Book a clinic visit or an online consultation"
+      },
+      "chips": {
+        "c1": "Clinic or online",
+        "c2": "English and Hindi"
+      }
     },
     "consultOnline": {
       "title": "Consult online from home",
       "body": "Video or audio consultations with doctors who offer online care.",
       "cta": "Consult online",
       "imageAlt": "Illustration of a phone showing a video call with a doctor",
-      "badge": "From home"
+      "badge": "From home",
+      "points": {
+        "p1": "Video or audio call from your phone",
+        "p2": "Private calls, never recorded",
+        "p3": "Consultation summary after the call"
+      },
+      "chips": {
+        "c1": "Not recorded",
+        "c2": "No travel, no queue"
+      }
     },
     "shops": {
       "title": "Find trusted medical shops near you",
       "body": "Partner shops with checked addresses, hours and directions.",
       "cta": "Find shops",
       "imageAlt": "Illustration of a medical shop with a map pin",
-      "badge": "Partner shops"
+      "badge": "Partner shops",
+      "points": {
+        "p1": "Verified address and opening hours",
+        "p2": "Directions from where you are",
+        "p3": "Call the shop before you go"
+      },
+      "chips": {
+        "c1": "Open hours shown",
+        "c2": "One-tap directions"
+      }
     },
     "mockFee": "Fee",
     "mockSlot": "Next slot",
     "mockDirections": "Directions",
-    "mockLive": "Secure call"
+    "mockLive": "Secure call",
+    "mockSlots": "Available slots",
+    "mockFeeShown": "Fee shown upfront",
+    "mockCall": "Consultation in progress",
+    "mockNearby": "Nearby partner shops"
   },
   "trust": {
     "label": "Why patients choose A-CureXpress",
@@ -322,6 +353,41 @@
       "title": "I own a medical shop",
       "body": "Appear on the map with your verified address, hours and services.",
       "cta": "Register your shop"
+    }
+  },
+  "promises": {
+    "label": "Why book with A-CureXpress",
+    "freeDelivery": {
+      "title": "Free delivery",
+      "body": "On orders over {amount}"
+    },
+    "support": {
+      "title": "Customer support",
+      "body": "Dedicated helpline"
+    },
+    "licensedPharmacies": {
+      "title": "Licensed pharmacies",
+      "body": "Medicines from licensed partners"
+    },
+    "clearPricing": {
+      "title": "Clear pricing",
+      "body": "MRP and discounts shown upfront"
+    },
+    "verifiedDoctors": {
+      "title": "Verified doctors",
+      "body": "Registration checked by our team"
+    },
+    "clinicOrOnline": {
+      "title": "Clinic or online",
+      "body": "You choose how to consult"
+    },
+    "securePayments": {
+      "title": "Secure payments",
+      "body": "Confirmed on our servers"
+    },
+    "privateRecords": {
+      "title": "Private records",
+      "body": "Only you and your doctor"
     }
   }
 }
