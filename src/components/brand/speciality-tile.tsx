@@ -28,16 +28,24 @@ const icons: Record<SpecialitySlug, LucideIcon> = {
   psychiatry: Brain,
 };
 
-export function SpecialityTile({ slug }: { slug: SpecialitySlug }) {
+const tones = [
+  "bg-tint-blue text-brand-blue",
+  "bg-tint-green text-green-ink",
+  "bg-tint-cream text-warning",
+] as const;
+
+export function SpecialityTile({ slug, index = 0 }: { slug: SpecialitySlug; index?: number }) {
   const t = useTranslations("specialities.names");
   const Icon = icons[slug];
   return (
     <Link
       href={{ pathname: "/doctors", query: { speciality: slug } }}
-      className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-line bg-panel p-2 text-center transition-colors hover:border-brand-blue hover:bg-tint-blue"
+      className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-line bg-panel p-2 text-center transition hover:-translate-y-0.5 hover:border-brand-blue hover:shadow-md"
     >
-      <span className="flex size-11 items-center justify-center rounded-full bg-tint-blue">
-        <Icon aria-hidden="true" className="size-5 text-brand-blue" />
+      <span
+        className={`flex size-12 items-center justify-center rounded-full ${tones[index % tones.length]}`}
+      >
+        <Icon aria-hidden="true" className="size-6" />
       </span>
       <span className="text-[13px] leading-tight font-medium text-ink">{t(slug)}</span>
     </Link>

@@ -30,19 +30,19 @@ export function DoctorCard({ doctor }: { doctor: DoctorSummary }) {
   const slot = formatSlotTime(doctor.nextSlot.time, locale);
 
   return (
-    <article className="panel flex h-full flex-col gap-3 border border-line p-3">
+    <article className="flex h-full flex-col gap-3 rounded-lg border border-tint-blue bg-tint-blue-soft p-3 transition hover:border-brand-blue hover:shadow-md">
       <div className="flex gap-3">
         <Image
           src="/images/doctor-placeholder.svg"
           alt={t("photoAlt", { name: doctor.name })}
           width={64}
           height={64}
-          className="size-16 shrink-0 rounded-full"
+          className="size-16 shrink-0 rounded-full bg-panel ring-2 ring-tint-green ring-offset-2"
         />
         <div className="min-w-0">
           <h3 className="truncate text-base leading-snug font-semibold">{doctor.name}</h3>
           <p className="text-sm text-body">{tSpeciality(doctor.speciality)}</p>
-          <p className="text-[13px] text-muted">
+          <p className="text-[13px] text-body">
             {t("experience", { years: doctor.experienceYears })}
           </p>
         </div>
@@ -59,7 +59,7 @@ export function DoctorCard({ doctor }: { doctor: DoctorSummary }) {
       <div className="mt-auto flex items-end justify-between gap-2 border-t border-line pt-3">
         <dl className="min-w-0 text-[13px]">
           <div>
-            <dt className="text-muted">{t("fee")}</dt>
+            <dt className="text-body">{t("fee")}</dt>
             <dd className="text-lg leading-tight font-bold text-ink">
               {formatInr(doctor.feeInr, locale)}
             </dd>

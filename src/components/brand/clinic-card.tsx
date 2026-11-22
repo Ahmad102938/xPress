@@ -10,7 +10,7 @@ import { ModeChips } from "./mode-chip";
 export function ClinicCard({ clinic }: { clinic: ClinicSummary }) {
   const t = useTranslations("clinics");
   return (
-    <article className="panel flex h-full flex-col overflow-hidden border border-line">
+    <article className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-panel transition hover:border-brand-green hover:shadow-md">
       <Image
         src="/images/clinic-placeholder.svg"
         alt={t("photoAlt", { name: clinic.name })}
@@ -32,9 +32,9 @@ export function ClinicCard({ clinic }: { clinic: ClinicSummary }) {
         </p>
         <RatingStars rating={clinic.rating} count={clinic.ratingCount} />
         <ModeChips modes={clinic.modes} />
-        <Button asChild variant="outline" className="mt-auto w-full">
+        <Button asChild variant="book" className="mt-auto w-full">
           <Link href="/clinics" aria-describedby={`${clinic.id}-name`}>
-            {t("view")}
+            {t("book")}
           </Link>
         </Button>
       </div>

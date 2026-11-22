@@ -1,3 +1,4 @@
+import { Stethoscope } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SpecialityTile } from "@/components/brand/speciality-tile";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -11,12 +12,14 @@ export function SpecialityGrid() {
         id="specialities-title"
         title={t("title")}
         subtitle={t("subtitle")}
+        icon={Stethoscope}
+        iconClassName="bg-brand-blue text-white"
         viewAllHref="/specialities"
       />
       <ul className="grid grid-cols-4 gap-2 md:grid-cols-8 md:gap-3">
-        {specialities.slice(0, HOME_SPECIALITY_COUNT).map((s) => (
+        {specialities.slice(0, HOME_SPECIALITY_COUNT).map((s, i) => (
           <li key={s.slug}>
-            <SpecialityTile slug={s.slug} />
+            <SpecialityTile slug={s.slug} index={i} />
           </li>
         ))}
       </ul>

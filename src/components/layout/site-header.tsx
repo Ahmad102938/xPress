@@ -65,7 +65,6 @@ async function buildSuggestionGroups(flags: Flags): Promise<SearchSuggestionGrou
 
 export async function SiteHeader({ flags }: { flags: Flags }) {
   const t = await getTranslations("header");
-  const tCommon = await getTranslations("common");
   const locale = await getLocale();
   const groups = await buildSuggestionGroups(flags);
   const searchAction = getPathname({ href: "/doctors", locale });
@@ -73,12 +72,12 @@ export async function SiteHeader({ flags }: { flags: Flags }) {
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-panel">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-2 gap-y-2 px-4 py-2 md:flex-nowrap md:gap-4">
-        <Link
-          href="/"
-          aria-label={tCommon("homeLink")}
-          className="inline-flex min-h-11 items-center rounded-md"
-        >
+        {/* Accessible name = visible logo text (+ tagline on large screens), WCAG 2.5.3. */}
+        <Link href="/" className="inline-flex min-h-11 flex-col justify-center rounded-md">
           <Logo className="shrink-0" />
+          <span className="hidden pl-8.5 text-[11px] leading-tight text-muted lg:block">
+            {t("tagline")}
+          </span>
         </Link>
 
         <LocationPicker id="header-location" className="order-3 md:order-none" />
@@ -92,6 +91,12 @@ export async function SiteHeader({ flags }: { flags: Flags }) {
 
         <div className="order-2 ml-auto flex items-center gap-1 md:order-none md:ml-0">
           <LanguageSwitcher />
+          <Link
+            href="/for-doctors"
+            className="hidden min-h-11 items-center rounded-md px-2 text-sm font-semibold text-deep-blue hover:text-brand-blue xl:inline-flex"
+          >
+            {t("becomePartner")}
+          </Link>
           <Button asChild size="sm">
             <Link href="/login">
               <span className="sm:hidden">{t("loginShort")}</span>

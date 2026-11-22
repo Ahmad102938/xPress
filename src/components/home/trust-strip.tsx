@@ -3,6 +3,13 @@ import { useTranslations } from "next-intl";
 import { TrustStat } from "@/components/brand/trust-stat";
 import { trustStats, type TrustStatKey } from "@/lib/mock";
 
+const tones: Record<TrustStatKey, "blue" | "green" | "amber" | "navy"> = {
+  verifiedDoctors: "blue",
+  partnerClinics: "green",
+  pilotDistricts: "amber",
+  privacy: "navy",
+};
+
 const icons: Record<TrustStatKey, LucideIcon> = {
   verifiedDoctors: ShieldCheck,
   partnerClinics: Building2,
@@ -24,6 +31,7 @@ export function TrustStrip() {
           <li key={stat.key}>
             <TrustStat
               icon={icons[stat.key]}
+              tone={tones[stat.key]}
               value={stat.value}
               label={t(stat.key)}
               detail={stat.key === "privacy" ? t("privacyDetail") : undefined}

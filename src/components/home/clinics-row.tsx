@@ -1,3 +1,4 @@
+import { Building2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ClinicCard } from "@/components/brand/clinic-card";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -12,6 +13,8 @@ export function ClinicsRow() {
         id="clinics-title"
         title={t("title")}
         subtitle={t("subtitle")}
+        icon={Building2}
+        iconClassName="bg-amber text-on-amber"
         viewAllHref="/clinics"
       />
       <ul

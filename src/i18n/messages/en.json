@@ -29,7 +29,9 @@
     "login": "Login / Sign up",
     "loginShort": "Login",
     "language": "Language",
-    "primaryNav": "Main"
+    "primaryNav": "Main",
+    "tagline": "Healthcare at your doorstep",
+    "becomePartner": "Become a partner"
   },
   "search": {
     "label": "Search",
@@ -92,20 +94,27 @@
       "title": "Book a verified doctor in minutes",
       "body": "Check credentials, fees and the next free slot before you book.",
       "cta": "Find a doctor",
-      "imageAlt": "Illustration of a doctor next to a shield with a tick"
+      "imageAlt": "Illustration of a doctor next to a shield with a tick",
+      "badge": "Verified doctors"
     },
     "consultOnline": {
       "title": "Consult online from home",
       "body": "Video or audio consultations with doctors who offer online care.",
       "cta": "Consult online",
-      "imageAlt": "Illustration of a phone showing a video call with a doctor"
+      "imageAlt": "Illustration of a phone showing a video call with a doctor",
+      "badge": "From home"
     },
     "shops": {
       "title": "Find trusted medical shops near you",
       "body": "Partner shops with checked addresses, hours and directions.",
       "cta": "Find shops",
-      "imageAlt": "Illustration of a medical shop with a map pin"
-    }
+      "imageAlt": "Illustration of a medical shop with a map pin",
+      "badge": "Partner shops"
+    },
+    "mockFee": "Fee",
+    "mockSlot": "Next slot",
+    "mockDirections": "Directions",
+    "mockLive": "Secure call"
   },
   "trust": {
     "label": "Why patients choose A-CureXpress",
@@ -162,7 +171,7 @@
     "subtitle": "Clinics with one or many doctors, each bookable separately",
     "photoAlt": "Photo placeholder for {name}",
     "doctors": "{count, plural, one {# doctor} other {# doctors}}",
-    "view": "View clinic"
+    "book": "Book appointment"
   },
   "shopsMap": {
     "title": "Medical shops near you",
@@ -206,7 +215,8 @@
       "title": "Talk to a doctor online",
       "body": "Choose a doctor who offers online consultations and join a secure video or audio call from home.",
       "prescriptionNote": "If the doctor finds it appropriate, you get a digital prescription after the call.",
-      "cta": "Consult online"
+      "cta": "Consult online",
+      "badge": "Video and audio"
     },
     "ai": {
       "title": "AI Health Consultant",
@@ -287,5 +297,31 @@
     "account": "Account",
     "medicines": "Medicines",
     "health-assistant": "AI Health Consultant"
+  },
+  "categories": {
+    "label": "Browse categories",
+    "consultOnline": "Consult online",
+    "clinicVisit": "Clinic visit",
+    "shopsNearMe": "Shops near me",
+    "allSpecialities": "All specialities"
+  },
+  "joinUs": {
+    "title": "Grow your practice with A-CureXpress",
+    "subtitle": "Free listing after verification. Patients see your real schedule and fees.",
+    "doctor": {
+      "title": "I am a doctor",
+      "body": "Offer clinic visits, online consultations or both. Get the Verified badge after checks.",
+      "cta": "Join as a doctor"
+    },
+    "clinic": {
+      "title": "I run a clinic",
+      "body": "List your clinic once and add all your doctors, each with their own schedule.",
+      "cta": "List your clinic"
+    },
+    "shop": {
+      "title": "I own a medical shop",
+      "body": "Appear on the map with your verified address, hours and services.",
+      "cta": "Register your shop"
+    }
   }
 }
