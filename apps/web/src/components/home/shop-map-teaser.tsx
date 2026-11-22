@@ -1,7 +1,7 @@
 import { Info, Map } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { Button } from "@acurexpress/ui";
 import { Link } from "@/i18n/navigation";
 
 /**

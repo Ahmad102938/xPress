@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { renderWithIntl } from "@/test/render";
+import { renderWithIntl } from "../test/render";
 import { RatingStars } from "./rating-stars";
 
 describe("RatingStars", () => {

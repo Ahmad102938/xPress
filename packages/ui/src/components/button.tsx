@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 
 /**
  * Buttons. Every size keeps a 44px minimum touch target (§25 says 48px where space allows: use lg).

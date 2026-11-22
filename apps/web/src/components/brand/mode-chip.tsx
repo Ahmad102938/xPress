@@ -1,6 +1,6 @@
 import { MapPin, Video } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@acurexpress/ui";
 import type { ConsultationMode } from "@/lib/mock/types";
 
 /** Consultation mode label: video icon for Online, map pin for At clinic (§25). Icon plus text. */

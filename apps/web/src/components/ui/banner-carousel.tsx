@@ -12,7 +12,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@acurexpress/ui";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 

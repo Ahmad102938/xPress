@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 
 /**
  * A-CureXpress wordmark. TODO(brand): replace with the official logo files from HCQ Care.

@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
+import { cn } from "@acurexpress/ui";
 
 const localeLabels: Record<Locale, { short: string; lang: string }> = {
   en: { short: "EN", lang: "en" },

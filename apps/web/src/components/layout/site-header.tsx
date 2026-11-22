@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { Logo } from "@/components/brand/logo";
-import { Button } from "@/components/ui/button";
+import { Logo } from "@acurexpress/ui";
+import { Button } from "@acurexpress/ui";
 import { getPathname, Link } from "@/i18n/navigation";
 import type { Flags } from "@acurexpress/core";
 import { sampleClinics, sampleDoctors, specialities } from "@/lib/mock";

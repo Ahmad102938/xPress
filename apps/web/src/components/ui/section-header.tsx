@@ -2,7 +2,7 @@ import { ChevronRight, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { Link } from "@/i18n/navigation";
-import { cn } from "@/lib/utils";
+import { cn } from "@acurexpress/ui";
 
 interface SectionHeaderProps {
   id: string;

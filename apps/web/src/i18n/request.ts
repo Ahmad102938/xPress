@@ -1,3 +1,4 @@
+import { uiMessages } from "@acurexpress/ui";
 import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 import { routing } from "./routing";
@@ -9,6 +10,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   return {
     locale,
     timeZone: "Asia/Kolkata",
-    messages: (await import(`./messages/${locale}.json`)).default,
+    // Shared component strings first; app namespaces never reuse their names.
+    messages: { ...uiMessages[locale], ...(await import(`./messages/${locale}.json`)).default },
   };
 });

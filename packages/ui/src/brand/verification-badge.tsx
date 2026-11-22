@@ -1,7 +1,7 @@
 import { ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { BadgeType } from "@/lib/mock/types";
-import { cn } from "@/lib/utils";
+import type { BadgeType } from "@acurexpress/core";
+import { cn } from "../lib/utils";
 
 /*
  * Public doctor badges (Addendum B, §25 "Status labels").

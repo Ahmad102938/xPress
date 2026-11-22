@@ -1,6 +1,6 @@
 import { MapPin, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
+import { cn } from "@acurexpress/ui";
 
 /**
  * Static location chip. Uses the native `popover` attribute: no JavaScript, Escape and

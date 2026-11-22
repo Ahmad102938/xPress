@@ -1,7 +1,7 @@
 import { Check, CreditCard, FileCheck2, Lock, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { RegisteredBadge, VerifiedBadge } from "@/components/brand/verification-badge";
-import { Button } from "@/components/ui/button";
+import { RegisteredBadge, VerifiedBadge } from "@acurexpress/ui";
+import { Button } from "@acurexpress/ui";
 import { Link } from "@/i18n/navigation";
 
 /** Dark navy trust band (reference design). White text on navy is > 12:1. */

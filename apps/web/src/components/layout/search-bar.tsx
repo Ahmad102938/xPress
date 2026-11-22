@@ -4,7 +4,7 @@ import { ArrowRight, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useId, useMemo, useState, type KeyboardEvent } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@acurexpress/ui";
 
 export interface SearchSuggestion {
   id: string;

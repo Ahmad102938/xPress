@@ -1,8 +1,8 @@
 import { MapPin, Stethoscope } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import { RatingStars } from "@/components/ui/rating-stars";
+import { Button } from "@acurexpress/ui";
+import { RatingStars } from "@acurexpress/ui";
 import { Link } from "@/i18n/navigation";
 import type { ClinicSummary } from "@/lib/mock/types";
 import { ModeChips } from "./mode-chip";

@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Logo } from "@/components/brand/logo";
+import { Logo } from "@acurexpress/ui";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "./language-switcher";
 

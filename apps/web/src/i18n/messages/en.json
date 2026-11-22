@@ -187,16 +187,6 @@
     "online": "Online",
     "atClinic": "At clinic"
   },
-  "badges": {
-    "verified": "A-CureXpress Verified",
-    "verifiedHint": "Registration number checked, documents checked, agreement signed",
-    "registered": "Registered Doctor",
-    "registeredHint": "Approved profile. Full verification not yet complete"
-  },
-  "rating": {
-    "label": "Rated {rating} out of 5",
-    "count": "({count, plural, one {# rating} other {# ratings}})"
-  },
   "clinics": {
     "title": "Partner clinics",
     "subtitle": "Clinics with one or many doctors, each bookable separately",

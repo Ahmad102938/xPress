@@ -1,6 +1,6 @@
 import { ArrowRight, Bot, Video } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { Button } from "@acurexpress/ui";
 import { Link } from "@/i18n/navigation";
 import type { Flags } from "@acurexpress/core";
 

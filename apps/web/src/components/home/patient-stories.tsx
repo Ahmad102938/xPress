@@ -1,6 +1,6 @@
 import { Quote } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@acurexpress/ui";
 
 /**
  * SAMPLE LAYOUT ONLY. No fabricated reviews (hard rule 7). Real stories need patient consent and

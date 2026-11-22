@@ -1,0 +1,15 @@
+{
+  "_meta": {
+    "status": "TODO-review: first-pass Hindi translation. Needs review by a native speaker and HCQ Care before launch."
+  },
+  "badges": {
+    "verified": "A-CureXpress वेरिफ़ाइड",
+    "verifiedHint": "रजिस्ट्रेशन नंबर और दस्तावेज़ जाँचे गए, एग्रीमेंट साइन हुआ",
+    "registered": "रजिस्टर्ड डॉक्टर",
+    "registeredHint": "प्रोफ़ाइल स्वीकृत। पूरा वेरिफ़िकेशन अभी बाकी है"
+  },
+  "rating": {
+    "label": "5 में से {rating} रेटिंग",
+    "count": "({count, plural, one {# रेटिंग} other {# रेटिंग}})"
+  }
+}

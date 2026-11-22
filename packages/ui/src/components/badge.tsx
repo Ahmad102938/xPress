@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 
 /**
  * Small labels and chips. Always carry text (and usually an icon): never meaning by colour alone.
