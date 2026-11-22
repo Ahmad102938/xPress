@@ -1,20 +1,22 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { parseFlags } from "@/lib/flags";
 import { renderWithIntl } from "@/test/render";
 import { ServicePromises } from "./service-promises";
 
 describe("ServicePromises", () => {
-  it("shows only promises that are true today when medicine sales are off", () => {
-    renderWithIntl(<ServicePromises flags={parseFlags({})} />);
+  it("shows the four store promises with their sub-lines", () => {
+    renderWithIntl(<ServicePromises />);
     expect(screen.getAllByRole("listitem")).toHaveLength(4);
-    expect(screen.getByText("Verified doctors")).toBeInTheDocument();
-    expect(screen.queryByText("Free delivery")).toBeNull();
+    expect(screen.getByText("Free Delivery")).toBeInTheDocument();
+    expect(screen.getByText("On orders over ₹499")).toBeInTheDocument();
+    expect(screen.getByText("24/7 Support")).toBeInTheDocument();
+    expect(screen.getByText("Price match guarantee")).toBeInTheDocument();
   });
 
-  it("keeps commerce promises hidden until HCQ confirms them, even with the flag on", () => {
-    renderWithIntl(<ServicePromises flags={parseFlags({ FLAG_MEDICINE_SALES: "true" })} />);
-    expect(screen.queryByText("Free delivery")).toBeNull();
-    expect(screen.queryByText(/guaranteed/i)).toBeNull();
+  it("uses decorative icons only, so text carries the meaning", () => {
+    const { container } = renderWithIntl(<ServicePromises />);
+    for (const svg of container.querySelectorAll("svg")) {
+      expect(svg).toHaveAttribute("aria-hidden", "true");
+    }
   });
 });

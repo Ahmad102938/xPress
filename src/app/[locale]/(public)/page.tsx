@@ -32,8 +32,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       <h1 className="sr-only">{t("title")}</h1>
       <CategoryStrip flags={flags} />
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 md:gap-6 md:py-6">
-        <ServicePromises flags={flags} />
         <HeroCarousel flags={flags} />
+        <ServicePromises />
         <QuickActions flags={flags} />
         <TrustStrip />
         <SpecialityGrid />

@@ -359,38 +359,22 @@
     }
   },
   "promises": {
-    "label": "A-CureXpress से क्यों बुक करें",
+    "label": "हमारे वादे",
     "freeDelivery": {
       "title": "मुफ़्त डिलीवरी",
       "body": "{amount} से ऊपर के ऑर्डर पर"
     },
     "support": {
-      "title": "ग्राहक सहायता",
+      "title": "24/7 सहायता",
       "body": "समर्पित हेल्पलाइन"
     },
-    "licensedPharmacies": {
-      "title": "लाइसेंस वाली फ़ार्मेसी",
-      "body": "लाइसेंस वाले पार्टनर से दवाइयाँ"
+    "authentic": {
+      "title": "असली प्रोडक्ट",
+      "body": "100% गारंटी"
     },
-    "clearPricing": {
-      "title": "साफ़ कीमतें",
-      "body": "MRP और छूट पहले से दिखती है"
-    },
-    "verifiedDoctors": {
-      "title": "वेरिफ़ाइड डॉक्टर",
-      "body": "हमारी टीम ने रजिस्ट्रेशन जाँचा"
-    },
-    "clinicOrOnline": {
-      "title": "क्लिनिक या ऑनलाइन",
-      "body": "परामर्श का तरीका आप चुनें"
-    },
-    "securePayments": {
-      "title": "सुरक्षित भुगतान",
-      "body": "हमारे सर्वर पर पुष्टि"
-    },
-    "privateRecords": {
-      "title": "निजी रिकॉर्ड",
-      "body": "सिर्फ़ आप और आपके डॉक्टर"
+    "bestPrices": {
+      "title": "सबसे अच्छी कीमत",
+      "body": "प्राइस मैच गारंटी"
     }
   }
 }

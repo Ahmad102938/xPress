@@ -356,38 +356,22 @@
     }
   },
   "promises": {
-    "label": "Why book with A-CureXpress",
+    "label": "Our promises",
     "freeDelivery": {
-      "title": "Free delivery",
+      "title": "Free Delivery",
       "body": "On orders over {amount}"
     },
     "support": {
-      "title": "Customer support",
+      "title": "24/7 Support",
       "body": "Dedicated helpline"
     },
-    "licensedPharmacies": {
-      "title": "Licensed pharmacies",
-      "body": "Medicines from licensed partners"
+    "authentic": {
+      "title": "Authentic Products",
+      "body": "100% guaranteed"
     },
-    "clearPricing": {
-      "title": "Clear pricing",
-      "body": "MRP and discounts shown upfront"
-    },
-    "verifiedDoctors": {
-      "title": "Verified doctors",
-      "body": "Registration checked by our team"
-    },
-    "clinicOrOnline": {
-      "title": "Clinic or online",
-      "body": "You choose how to consult"
-    },
-    "securePayments": {
-      "title": "Secure payments",
-      "body": "Confirmed on our servers"
-    },
-    "privateRecords": {
-      "title": "Private records",
-      "body": "Only you and your doctor"
+    "bestPrices": {
+      "title": "Best Prices",
+      "body": "Price match guarantee"
     }
   }
 }
