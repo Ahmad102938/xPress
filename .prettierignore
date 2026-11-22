@@ -1,11 +1,12 @@
 docs/
 pnpm-lock.yaml
 .next/
+.turbo/
 node_modules/
 supabase/.temp/
 playwright-report/
 test-results/
-src/lib/supabase/database.types.ts
+**/database.types.ts
 AGENTS.md
 .remember/
 CLAUDE.md

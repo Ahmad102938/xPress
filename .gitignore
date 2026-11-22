@@ -1,19 +1,22 @@
-# dependencies
-/node_modules
-/.pnp
+# dependencies (any workspace)
+node_modules/
+.pnp
 .pnp.*
 
 # testing
-/coverage
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
 
 # next.js
-/.next/
-/out/
-/build
+.next/
+out/
+build/
+
+# turborepo
+.turbo/
 
 # misc
 .DS_Store
@@ -23,7 +26,7 @@
 npm-debug.log*
 .pnpm-debug.log*
 
-# env files: never commit real values. Only the example is tracked.
+# env files: never commit real values. Only the examples are tracked.
 .env*
 !.env.example
 

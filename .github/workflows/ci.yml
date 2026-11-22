@@ -66,7 +66,7 @@ jobs:
   #     - run: pnpm supabase test db
   #     - run: pnpm supabase db lint
   #     - name: Types are up to date
-  #       run: pnpm db:types && git diff --exit-code src/lib/supabase/database.types.ts
+  #       run: pnpm db:types && git diff --exit-code apps/web/src/lib/supabase/database.types.ts
   #
   # TODO(deploy): staging deploy after merge to main (migrations via `supabase db push`
   # with the STAGING project ref and secrets from GitHub environments). Production deploy

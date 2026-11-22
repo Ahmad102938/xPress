@@ -1,0 +1,40 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "stream",
+  "globalDependencies": [".nvmrc"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": ["FLAG_*", "NEXT_PUBLIC_*", "SUPABASE_*", "NEXT_TELEMETRY_DISABLED"]
+    },
+    "start": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true,
+      "env": ["FLAG_*", "NEXT_PUBLIC_*", "SUPABASE_*"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["FLAG_*", "NEXT_PUBLIC_*", "SUPABASE_*"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "outputs": [".next/types/**"]
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "env": ["FLAG_*"]
+    },
+    "test:e2e": {
+      "cache": false,
+      "env": ["FLAG_*", "NEXT_PUBLIC_*", "SUPABASE_*", "E2E_PORT"],
+      "passThroughEnv": ["CI", "PLAYWRIGHT_*", "HOME"]
+    }
+  }
+}
