@@ -1,4 +1,3 @@
-import { BadgeCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { DoctorCard } from "@/components/brand/doctor-card";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -13,8 +12,7 @@ export function DoctorsRow() {
         id="doctors-title"
         title={t("title")}
         subtitle={t("subtitle")}
-        icon={BadgeCheck}
-        iconClassName="bg-brand-green text-white"
+        accent="green"
         viewAllHref="/doctors"
       />
       {/* Horizontal row; scrollable with touch, trackpad or keyboard (focusable region). */}

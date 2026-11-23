@@ -46,6 +46,11 @@ jobs:
       - name: Lint, typecheck, test, build
         run: pnpm turbo run lint typecheck test build ${{ github.event_name == 'pull_request' && '--affected' || '' }}
 
+      # Home must stay statically prerendered with sign-in present (docs/specs/auth.md R2-M17).
+      # Runs whenever this run built the web app (always on main; on PRs when web is affected).
+      - name: Home is prerendered
+        run: if [ -d apps/web/.next ]; then pnpm --filter @acurexpress/web test:prerender; fi
+
   e2e:
     name: E2E (${{ matrix.app }})
     runs-on: ubuntu-latest
@@ -82,27 +87,57 @@ jobs:
           path: apps/${{ matrix.app }}/playwright-report
           retention-days: 7
 
+  # Database and auth jobs run against a throwaway LOCAL Supabase stack inside the runner
+  # (docs/specs/auth.md R1-B9, R2-M21, R2-N4). No remote credentials. One database for all three
+  # apps, so these jobs are not filtered by app. `pnpm db:start` creates the local signing key first.
+  database:
+    name: Database (local stack)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:start
+      - run: pnpm db:reset
+      - run: pnpm db:test
+      - run: pnpm supabase db lint
+      - name: Types are up to date
+        run: pnpm db:types && git diff --exit-code packages/db/src/database.types.ts
+
+  e2e-auth:
+    name: E2E auth (web, local stack)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:start
+      - run: pnpm db:reset
+      - name: Write the local auth e2e env (git-ignored)
+        run: apps/web/scripts/auth-e2e-env.sh
+      - name: Install Playwright Chromium
+        run: pnpm --filter @acurexpress/web exec playwright install --with-deps chromium
+      - name: Playwright (auth)
+        run: pnpm --filter @acurexpress/web test:e2e:auth
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-web-auth
+          path: apps/web/playwright-report
+          retention-days: 7
+
   # ---------------------------------------------------------------------------
-  # TODO(database): enable once the first migration lands. See docs/SUPABASE.md §14.
-  # Runs against a throwaway LOCAL Supabase stack inside the runner. No remote credentials.
-  # One database for all three apps, so this job is not filtered by app.
-  #
-  # database:
-  #   name: Database (local stack)
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: pnpm/action-setup@v4
-  #     - uses: actions/setup-node@v4
-  #       with: { node-version-file: .nvmrc, cache: pnpm }
-  #     - run: pnpm install --frozen-lockfile
-  #     - run: pnpm supabase start
-  #     - run: pnpm supabase db reset
-  #     - run: pnpm supabase test db
-  #     - run: pnpm supabase db lint
-  #     - name: Types are up to date
-  #       run: pnpm db:types && git diff --exit-code packages/db/src/database.types.ts
-  #
   # TODO(deploy): order is fixed. See docs/DEPLOYMENT.md.
   #   1. After merge to main: migrate STAGING first (`supabase db push` with the staging project
   #      ref and secrets from a GitHub environment), then let Vercel deploy the apps to staging.

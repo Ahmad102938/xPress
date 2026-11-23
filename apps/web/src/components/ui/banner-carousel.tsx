@@ -14,6 +14,10 @@ import {
 } from "react";
 import { cn } from "@acurexpress/ui";
 
+const controlClass =
+  "flex size-11 cursor-pointer items-center justify-center rounded-full text-ink hover:bg-tint-blue";
+const overlayControlClass = "md:text-white md:hover:bg-white/15 md:focus-visible:outline-white";
+
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 function subscribeReducedMotion(callback: () => void) {
@@ -36,11 +40,16 @@ interface BannerCarouselProps {
   label: string;
   children: ReactNode;
   autoAdvanceMs?: number;
+  /**
+   * From md up, draw the controls on top of the slide (bottom-left, white on the banner) so the
+   * hero stays short; below md they sit under the slide.
+   */
+  overlayControls?: boolean;
   className?: string;
 }
 
 /**
- * Accessible banner carousel (WAI-ARIA APG carousel pattern).
+ * Accessible banner carousel (WAI-ARIA APG carousel pattern). About 7 s per slide by default.
  * - Native horizontal scroll with scroll-snap gives touch swipe without JS.
  * - Auto-advance pauses on hover, on keyboard focus, via the Pause button, and is off when the user
  *   prefers reduced motion.
@@ -50,7 +59,8 @@ interface BannerCarouselProps {
 export function BannerCarousel({
   label,
   children,
-  autoAdvanceMs = 6000,
+  autoAdvanceMs = 7000,
+  overlayControls = false,
   className,
 }: BannerCarouselProps) {
   const t = useTranslations("hero");
@@ -125,7 +135,7 @@ export function BannerCarousel({
         ref={trackRef}
         onScroll={handleScroll}
         aria-live={autoplay ? "off" : "polite"}
-        className="scroller w-full [scroll-padding-inline:0] rounded-lg"
+        className="scroller w-full [scroll-padding-inline:0] rounded-2xl"
       >
         {slides.map((slide, i) => (
           <div
@@ -142,12 +152,17 @@ export function BannerCarousel({
       </div>
 
       {count > 1 && (
-        <div className="mt-1 flex items-center justify-center gap-1">
+        <div
+          className={cn(
+            "mt-1 flex items-center justify-center gap-1",
+            overlayControls && "md:absolute md:bottom-2 md:left-9 md:z-20 md:mt-0 md:justify-start",
+          )}
+        >
           <button
             type="button"
             onClick={() => goTo(index - 1)}
             aria-label={t("previous")}
-            className="flex size-11 cursor-pointer items-center justify-center rounded-full text-ink hover:bg-tint-blue"
+            className={cn(controlClass, overlayControls && overlayControlClass)}
           >
             <ChevronLeft aria-hidden="true" className="size-5" />
           </button>
@@ -159,13 +174,20 @@ export function BannerCarousel({
                 onClick={() => goTo(i)}
                 aria-label={t("goToSlide", { number: i + 1 })}
                 aria-current={i === index ? "true" : undefined}
-                className="group flex size-11 cursor-pointer items-center justify-center"
+                className={cn(
+                  "group flex size-11 cursor-pointer items-center justify-center",
+                  overlayControls && "md:focus-visible:outline-white",
+                )}
               >
                 <span
                   aria-hidden="true"
                   className={cn(
                     "block h-2.5 rounded-full border border-deep-blue transition-all",
                     i === index ? "w-6 bg-deep-blue" : "w-2.5 bg-panel group-hover:bg-tint-blue",
+                    overlayControls &&
+                      (i === index
+                        ? "md:border-white md:bg-white"
+                        : "md:border-white md:bg-transparent md:group-hover:bg-white/40"),
                   )}
                 />
               </button>
@@ -175,7 +197,7 @@ export function BannerCarousel({
             type="button"
             onClick={() => goTo(index + 1)}
             aria-label={t("next")}
-            className="flex size-11 cursor-pointer items-center justify-center rounded-full text-ink hover:bg-tint-blue"
+            className={cn(controlClass, overlayControls && overlayControlClass)}
           >
             <ChevronRight aria-hidden="true" className="size-5" />
           </button>
@@ -184,7 +206,7 @@ export function BannerCarousel({
               type="button"
               onClick={() => setUserPaused((paused) => !paused)}
               aria-label={userPaused ? t("play") : t("pause")}
-              className="flex size-11 cursor-pointer items-center justify-center rounded-full text-ink hover:bg-tint-blue"
+              className={cn(controlClass, overlayControls && overlayControlClass)}
             >
               {userPaused ? (
                 <Play aria-hidden="true" className="size-4" />

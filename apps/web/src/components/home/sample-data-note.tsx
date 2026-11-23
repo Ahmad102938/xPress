@@ -7,7 +7,7 @@ export function SampleDataNote() {
   const t = useTranslations("common");
   if (!IS_SAMPLE_DATA) return null;
   return (
-    <p className="mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+    <p className="mt-2 flex items-center gap-1.5 text-[13px] text-body">
       <Info aria-hidden="true" className="size-3.5 shrink-0" />
       {t("sampleData")}
     </p>

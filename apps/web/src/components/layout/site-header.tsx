@@ -1,9 +1,11 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { Button, Logo } from "@acurexpress/ui";
+import { Logo } from "@acurexpress/ui";
 import { getPathname, Link } from "@/i18n/navigation";
 import type { Flags } from "@acurexpress/core";
 import { sampleClinics, sampleDoctors, specialities } from "@/lib/mock";
+import { HeaderAuth } from "@/features/auth/components/header-auth";
 import { LanguageSwitcher } from "./language-switcher";
+import { CartButton } from "./cart-button";
 import { LocationPicker } from "./location-picker";
 import { SearchBar, type SearchSuggestionGroup } from "./search-bar";
 
@@ -73,35 +75,35 @@ export async function SiteHeader({ flags }: { flags: Flags }) {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-2 gap-y-2 px-4 py-2 md:flex-nowrap md:gap-4">
         {/* Accessible name = visible logo text (+ tagline on large screens), WCAG 2.5.3. */}
         <Link href="/" className="inline-flex min-h-11 flex-col justify-center rounded-md">
-          <Logo className="shrink-0" />
-          <span className="hidden pl-8.5 text-[11px] leading-tight text-muted lg:block">
+          {/* Phones show the mark only (Apollo-style, room for the location); the name stays readable. */}
+          <Logo className="shrink-0" textClassName="sr-only md:not-sr-only" />
+          <span className="hidden pl-8.5 text-[13px] leading-tight text-body xl:block">
             {t("tagline")}
           </span>
         </Link>
 
-        <LocationPicker id="header-location" className="order-3 md:order-none" />
+        <LocationPicker variant="desktop" className="hidden md:inline-flex" />
+        {/* Phones: "Deliver to / place" beside the logo mark in the top row (Apollo-style). */}
+        <LocationPicker variant="mobile" className="order-1 min-w-0 flex-1 md:hidden" />
 
         <SearchBar
           action={searchAction}
           groups={groups}
           includesMedicines={flags.medicineSales}
-          className="order-4 min-w-0 flex-1 basis-[calc(100%-3.5rem)] md:order-none md:basis-auto"
+          className={
+            flags.medicineSales
+              ? "order-4 min-w-0 flex-1 basis-[calc(100%-3.5rem)] md:order-none md:basis-auto"
+              : "order-4 min-w-0 flex-1 basis-full md:order-none md:basis-auto"
+          }
         />
+
+        {/* Phones: the cart sits beside the search box (Apollo-style); desktop: top right. */}
+        {flags.medicineSales ? <CartButton className="order-5 md:hidden" /> : null}
 
         <div className="order-2 ml-auto flex items-center gap-1 md:order-none md:ml-0">
           <LanguageSwitcher />
-          <Link
-            href="/for-doctors"
-            className="hidden min-h-11 items-center rounded-md px-2 text-sm font-semibold text-deep-blue hover:text-brand-blue xl:inline-flex"
-          >
-            {t("becomePartner")}
-          </Link>
-          <Button asChild size="sm">
-            <Link href="/login">
-              <span className="sm:hidden">{t("loginShort")}</span>
-              <span className="hidden sm:inline">{t("login")}</span>
-            </Link>
-          </Button>
+          {flags.medicineSales ? <CartButton className="hidden md:inline-flex" /> : null}
+          <HeaderAuth />
         </div>
       </div>
     </header>

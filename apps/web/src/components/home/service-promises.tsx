@@ -1,5 +1,6 @@
 import type { ComponentType, SVGProps } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import type { Flags } from "@acurexpress/core";
 import {
   AuthenticShieldIcon,
   DeliveryTruckIcon,
@@ -8,53 +9,68 @@ import {
 } from "@/components/brand/promise-icons";
 import {
   FREE_DELIVERY_THRESHOLD_INR,
-  servicePromises,
-  type PromiseKey,
-  type PromiseTone,
-} from "@/config/service-promises";
+  showStoreClaims,
+  trustClaims,
+  type TrustClaim,
+  type TrustClaimIcon,
+  type TrustClaimTone,
+} from "@/config/trust-strip";
 import { formatInr } from "@acurexpress/core";
 
-const icons: Record<PromiseKey, ComponentType<SVGProps<SVGSVGElement>>> = {
-  freeDelivery: DeliveryTruckIcon,
-  support: SupportClockIcon,
-  authentic: AuthenticShieldIcon,
-  bestPrices: PriceTagIcon,
+const icons: Record<TrustClaimIcon, ComponentType<SVGProps<SVGSVGElement>>> = {
+  truck: DeliveryTruckIcon,
+  clock: SupportClockIcon,
+  shield: AuthenticShieldIcon,
+  tag: PriceTagIcon,
 };
 
-const tones: Record<PromiseTone, string> = {
-  blue: "text-brand-blue",
-  green: "text-brand-green",
-  navy: "text-deep-blue",
-  red: "text-error",
+/** Icon colour on a matching soft tile. Decorative: the text carries the meaning. */
+const tones: Record<TrustClaimTone, string> = {
+  blue: "bg-tint-blue text-brand-blue",
+  green: "bg-tint-green text-brand-green",
+  navy: "bg-tint-blue-soft text-deep-blue ring-1 ring-tint-blue",
+  red: "bg-tint-cream text-error",
 };
 
-/** Quiet white strip of store promises with solid icons. Sits just below the hero carousel. */
-export function ServicePromises() {
+interface ServicePromisesProps {
+  /** Defaults to the config; props exist for tests and previews. */
+  claims?: readonly TrustClaim[];
+  show?: boolean;
+  flags?: Flags;
+}
+
+/**
+ * Store claims strip below the hero (config/trust-strip.ts, owner override). 2x2 on small
+ * screens, 4 across from lg. Text is the source of meaning; icons are decorative.
+ */
+export function ServicePromises({
+  claims = trustClaims,
+  show = showStoreClaims,
+  flags,
+}: ServicePromisesProps = {}) {
   const t = useTranslations("promises");
   const locale = useLocale();
+  const visible = claims.filter((claim) => !claim.requiresFlag || flags?.[claim.requiresFlag]);
+  if (!show || visible.length === 0) return null;
 
   return (
-    <section aria-label={t("label")} className="rounded-lg bg-panel py-4 md:py-5">
-      {/* Swipeable on small screens; focusable so keyboard users can scroll it too. */}
-      <ul
-        tabIndex={0}
-        aria-label={t("label")}
-        className="scroller gap-8 px-5 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-5 sm:px-8 lg:grid-cols-4 lg:gap-4 lg:px-6"
-      >
-        {servicePromises.map(({ key, tone }) => {
-          const Icon = icons[key];
+    <section aria-label={t("label")} data-trust-strip="" className="panel px-3 py-3 md:px-4">
+      <ul className="grid grid-cols-2 gap-x-3 gap-y-3 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line">
+        {visible.map(({ id, icon, tone, titleKey, subtitleKey }) => {
+          const Icon = icons[icon];
           return (
-            <li
-              key={key}
-              className="flex shrink-0 items-center gap-3 whitespace-nowrap sm:whitespace-normal lg:justify-center"
-            >
-              <Icon aria-hidden="true" className={`size-8 shrink-0 ${tones[tone]}`} />
-              <p className="leading-snug">
-                <span className="block text-[15px] font-semibold text-ink md:text-base">
-                  {t(`${key}.title`)}
+            <li key={id} className="flex min-w-0 items-center gap-2.5 lg:justify-center lg:px-4">
+              <span
+                className={`flex size-10 shrink-0 items-center justify-center rounded-xl md:size-11 ${tones[tone]}`}
+              >
+                <Icon aria-hidden="true" className="size-6" />
+              </span>
+              <p className="min-w-0 leading-tight">
+                <span className="block text-sm font-bold text-ink md:text-[15px]">
+                  {t(titleKey)}
                 </span>
-                <span className="block text-sm text-muted">
-                  {t(`${key}.body`, { amount: formatInr(FREE_DELIVERY_THRESHOLD_INR, locale) })}
+                <span className="block text-[13px] text-body">
+                  {t(subtitleKey, { amount: formatInr(FREE_DELIVERY_THRESHOLD_INR, locale) })}
                 </span>
               </p>
             </li>

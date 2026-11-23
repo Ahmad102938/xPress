@@ -1,0 +1,18 @@
+<!-- Code-only email (docs/specs/auth.md). No sign-in link: the code is typed into the A-CureXpress panel. -->
+<!-- TODO(HCQ): final wording and sender details. Hindi text is a first draft for review. -->
+<html lang="en">
+  <body style="font-family: Arial, sans-serif; color: #0f1b33; font-size: 16px; line-height: 1.5">
+    <p>Your A-CureXpress code is:</p>
+    <p style="font-size: 28px; font-weight: bold; letter-spacing: 6px">{{ .Token }}</p>
+    <p>
+      It expires in 10 minutes. Do not share this code with anyone. If you did not ask for it, you
+      can ignore this email.
+    </p>
+    <hr />
+    <p lang="hi">आपका A-CureXpress कोड: <strong>{{ .Token }}</strong></p>
+    <p lang="hi">
+      यह 10 मिनट में समाप्त हो जाएगा। यह कोड किसी के साथ साझा न करें। अगर आपने इसे नहीं माँगा था, तो इस ईमेल को
+      अनदेखा करें।
+    </p>
+  </body>
+</html>

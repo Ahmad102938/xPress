@@ -1,9 +1,14 @@
+import { setRequestLocale } from "next-intl/server";
+import { SiteShell } from "@/components/layout/site-shell";
+import type { Locale } from "@/i18n/routing";
+
 /**
- * Signed-in patient area (appointments, records, orders, profile).
- *
- * TODO(patient): placeholder only. No routes yet. Add an auth guard (server-side session + role check
- * from user_roles, never user_metadata) before adding any page here.
+ * Signed-in patient area. Same shell as the public pages and NO auth logic here (R1-M13): every page
+ * calls requirePatient() itself, inside its own <Suspense> boundary (cacheComponents is on).
+ * Roles come from user_roles on the server, never from user_metadata.
  */
-export default function PatientLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default async function PatientLayout({ children, params }: LayoutProps<"/[locale]">) {
+  const { locale } = await params;
+  setRequestLocale(locale as Locale);
+  return <SiteShell>{children}</SiteShell>;
 }

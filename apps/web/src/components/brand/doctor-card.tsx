@@ -29,7 +29,7 @@ export function DoctorCard({ doctor }: { doctor: DoctorSummary }) {
   const slot = formatSlotTime(doctor.nextSlot.time, locale);
 
   return (
-    <article className="flex h-full flex-col gap-3 rounded-lg border border-tint-blue bg-tint-blue-soft p-3 transition hover:border-brand-blue hover:shadow-md">
+    <article className="flex h-full flex-col gap-3 rounded-lg border border-tint-blue bg-tint-blue-soft p-3 shadow-sm transition hover:border-brand-blue hover:shadow-md motion-safe:hover:-translate-y-0.5">
       <div className="flex gap-3">
         <Image
           src="/images/doctor-placeholder.svg"

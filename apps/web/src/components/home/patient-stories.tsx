@@ -1,3 +1,4 @@
+import { SectionHeader } from "@/components/ui/section-header";
 import { Quote } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@acurexpress/ui";
@@ -11,10 +12,12 @@ export function PatientStories() {
   const tCommon = useTranslations("common");
   return (
     <section aria-labelledby="stories-title" className="panel p-4" data-testid="stories-section">
-      <h2 id="stories-title" className="text-lg font-bold md:text-xl">
-        {t("title")}
-      </h2>
-      <p className="mb-3 text-sm text-muted">{t("subtitle")}</p>
+      <SectionHeader
+        id="stories-title"
+        title={t("title")}
+        subtitle={t("subtitle")}
+        accent="amber"
+      />
       <ul className="grid gap-3 md:grid-cols-3">
         {[1, 2, 3].map((n) => (
           <li key={n} className="rounded-lg border border-dashed border-[#94a3b8] p-3">

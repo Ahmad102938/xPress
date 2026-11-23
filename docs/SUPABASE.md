@@ -132,6 +132,7 @@ If you made changes in your **local** Studio while exploring, capture them as a 
 - Primary keys are `uuid` with `default gen_random_uuid()`. Timestamps are `timestamptz` (stored in UTC; the app shows IST).
 - Every table has `created_at` and `updated_at` (with an updated_at trigger). Add `created_by` where an actor matters.
 - Create the table, `alter table ... enable row level security`, and its policies **in the same migration**.
+- Every migration that creates a table also grants the exact privileges needed to `anon`, `authenticated` or `service_role`, and nothing more (revoke the defaults first; `config.toml` sets `auto_expose_new_tables = false`).
 - Index every foreign key and every column used in a policy or a frequent filter. Add the index in the same migration.
 - Use enums or lookup tables for statuses. Document the allowed transitions in a comment and enforce them in a function or trigger.
 - Add `comment on table` and `comment on column` for anything non-obvious, especially anything holding patient data.

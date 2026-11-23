@@ -6,7 +6,7 @@ import type { TrustStatItem } from "./types";
  */
 export const trustStats: readonly TrustStatItem[] = [
   { key: "verifiedDoctors", value: "100+", isPlaceholder: true },
-  { key: "partnerClinics", value: "25+", isPlaceholder: true },
+  { key: "listedClinics", value: "25+", isPlaceholder: true },
   { key: "pilotDistricts", value: "1", isPlaceholder: true },
   { key: "privacy", value: null, isPlaceholder: false },
 ];

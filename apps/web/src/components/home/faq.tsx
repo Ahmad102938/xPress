@@ -1,3 +1,4 @@
+import { SectionHeader } from "@/components/ui/section-header";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -8,9 +9,7 @@ export function Faq() {
   const t = useTranslations("faq");
   return (
     <section aria-labelledby="faq-title" className="panel p-4 md:p-6">
-      <h2 id="faq-title" className="mb-2 text-lg font-bold md:text-xl">
-        {t("title")}
-      </h2>
+      <SectionHeader id="faq-title" title={t("title")} accent="navy" className="mb-1" />
       <div className="divide-y divide-line">
         {questions.map((key) => (
           <details key={key} name="faq" className="group">

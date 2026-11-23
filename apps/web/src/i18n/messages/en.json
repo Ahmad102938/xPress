@@ -13,25 +13,20 @@
     "skipToContent": "Skip to main content",
     "comingSoon": "Coming soon",
     "comingSoonBody": "We are building this page. Please check back soon.",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "legalPending": "The final text of this page is pending HCQ Care's legal review."
   },
   "emergency": {
     "message": "In an emergency call 112 or go to the nearest hospital. This is not an emergency service.",
     "dismiss": "Dismiss emergency notice"
   },
   "header": {
-    "chooseLocation": "Choose city or pincode",
-    "locationDialogTitle": "Your location",
-    "locationLabel": "City or pincode",
-    "locationPlaceholder": "e.g. 302001",
-    "locationNote": "Location search is coming soon. Results will show your area once it is ready.",
-    "locationClose": "Close",
     "login": "Login / Sign up",
     "loginShort": "Login",
     "language": "Language",
     "primaryNav": "Main",
-    "tagline": "Healthcare at your doorstep",
-    "becomePartner": "Become a partner"
+    "tagline": "Doctors, clinics and medical shops in one place",
+    "cart": "Cart"
   },
   "search": {
     "label": "Search",
@@ -90,67 +85,76 @@
     "next": "Next slide",
     "pause": "Pause automatic slides",
     "play": "Play automatic slides",
-    "verifiedDoctor": {
-      "title": "Book a verified doctor in minutes",
-      "body": "Check credentials, fees and the next free slot before you book.",
-      "cta": "Find a doctor",
-      "imageAlt": "Illustration of a doctor next to a shield with a tick",
-      "badge": "Verified doctors",
-      "points": {
-        "p1": "Registration and documents checked",
-        "p2": "Fee and next free slot shown before you pay",
-        "p3": "Book a clinic visit or an online consultation"
+    "slides": {
+      "doctors": {
+        "eyebrow": "Doctors",
+        "title": "Book a doctor in minutes",
+        "body": "Compare fees and free slots. Choose a clinic visit or online.",
+        "cta": "Find a doctor",
+        "p1": "Fee shown before you pay",
+        "p2": "Clinic visit or online",
+        "visualAlt": "Illustration of a doctor profile with the Registered Doctor and A-CureXpress Verified labels, time slots and a Book button."
       },
-      "chips": {
-        "c1": "Clinic or online",
-        "c2": "English and Hindi"
+      "online": {
+        "eyebrow": "Online consultation",
+        "title": "See a doctor from home",
+        "body": "Video or audio calls. Private and never recorded.",
+        "cta": "Consult online",
+        "p1": "Video or audio call",
+        "p2": "Never recorded",
+        "visualAlt": "Illustration of a person at home on a video call with a doctor, with call controls and a consultation summary."
+      },
+      "shops": {
+        "eyebrow": "Medical shops",
+        "title": "Find a medical shop near you",
+        "body": "Checked addresses, opening hours and directions.",
+        "cta": "Find shops",
+        "p1": "Opening hours shown",
+        "p2": "One-tap directions",
+        "visualAlt": "Illustration of a map with medical shop pins, your location and a card with Open now, Call and Directions."
+      },
+      "medicines": {
+        "eyebrow": "Medicines",
+        "title": "Order your medicines",
+        "body": "Upload a prescription and get medicines from a licensed shop.",
+        "cta": "Order medicines",
+        "p1": "Upload prescription",
+        "p2": "Licensed shops",
+        "visualAlt": "Illustration of a prescription being uploaded on a phone next to a medicine box."
+      },
+      "assistant": {
+        "eyebrow": "AI Health Consultant",
+        "title": "Ask a health question",
+        "body": "General guidance in simple words. Not a diagnosis.",
+        "cta": "Start a chat",
+        "p1": "General guidance only",
+        "p2": "Book a doctor when needed",
+        "visualAlt": "Illustration of a chat with the AI Health Consultant showing a note that it is not a diagnosis."
       }
     },
-    "consultOnline": {
-      "title": "Consult online from home",
-      "body": "Video or audio consultations with doctors who offer online care.",
-      "cta": "Consult online",
-      "imageAlt": "Illustration of a phone showing a video call with a doctor",
-      "badge": "From home",
-      "points": {
-        "p1": "Video or audio call from your phone",
-        "p2": "Private calls, never recorded",
-        "p3": "Consultation summary after the call"
-      },
-      "chips": {
-        "c1": "Not recorded",
-        "c2": "No travel, no queue"
-      }
-    },
-    "shops": {
-      "title": "Find trusted medical shops near you",
-      "body": "Partner shops with checked addresses, hours and directions.",
-      "cta": "Find shops",
-      "imageAlt": "Illustration of a medical shop with a map pin",
-      "badge": "Partner shops",
-      "points": {
-        "p1": "Verified address and opening hours",
-        "p2": "Directions from where you are",
-        "p3": "Call the shop before you go"
-      },
-      "chips": {
-        "c1": "Open hours shown",
-        "c2": "One-tap directions"
-      }
-    },
-    "mockFee": "Fee",
-    "mockSlot": "Next slot",
-    "mockDirections": "Directions",
-    "mockLive": "Secure call",
-    "mockSlots": "Available slots",
-    "mockFeeShown": "Fee shown upfront",
-    "mockCall": "Consultation in progress",
-    "mockNearby": "Nearby partner shops"
+    "visual": {
+      "slots": "Available slots",
+      "feeShown": "Fee shown before you pay",
+      "videoCall": "Video consultation",
+      "summary": "Consultation summary",
+      "notRecorded": "Not recorded",
+      "medicalShop": "Medical shop",
+      "openNow": "Open now",
+      "call": "Call",
+      "directions": "Directions",
+      "youAreHere": "You are here",
+      "checkedAddress": "Checked address",
+      "upload": "Upload prescription",
+      "prescriptionNeeded": "Prescription needed",
+      "licensedShop": "Licensed shop",
+      "aiAsk": "Ask about a symptom or medicine",
+      "aiNote": "General guidance, not a diagnosis"
+    }
   },
   "trust": {
     "label": "Why patients choose A-CureXpress",
     "verifiedDoctors": "Verified doctors",
-    "partnerClinics": "Partner clinics",
+    "listedClinics": "Listed clinics",
     "pilotDistricts": "Pilot district",
     "privacy": "Secure and private",
     "privacyDetail": "Your health data stays private",
@@ -188,7 +192,7 @@
     "atClinic": "At clinic"
   },
   "clinics": {
-    "title": "Partner clinics",
+    "title": "Clinics on A-CureXpress",
     "subtitle": "Clinics with one or many doctors, each bookable separately",
     "photoAlt": "Photo placeholder for {name}",
     "doctors": "{count, plural, one {# doctor} other {# doctors}}",
@@ -196,7 +200,7 @@
   },
   "shopsMap": {
     "title": "Medical shops near you",
-    "body": "See partner medical shops on a map, with verified addresses, opening hours and directions.",
+    "body": "See medical shops on a map, with verified addresses, opening hours and directions.",
     "stockNote": "Medicine availability: please confirm with the shop.",
     "cta": "Open map",
     "imageAlt": "Illustration of a street map with shop pins. Not a real map."
@@ -223,7 +227,7 @@
     "registeredTitle": "What “Registered” means",
     "registeredBody": "Our team approved the profile, but full verification is not complete yet. We never show both labels the same way.",
     "licencesTitle": "Licences checked",
-    "licencesBody": "Partner shops and pharmacies hold their own licences. We check them during approval and when they expire.",
+    "licencesBody": "Medical shops and pharmacies hold their own licences. We check them during approval and when they expire.",
     "privacyTitle": "Private health data",
     "privacyBody": "Only you and your treating doctor can see your health records. Wider sharing needs your consent.",
     "paymentsTitle": "Secure payments",
@@ -282,21 +286,63 @@
     }
   },
   "footer": {
-    "company": "Company",
-    "about": "About us",
-    "contact": "Contact",
-    "trust": "Trust and safety",
-    "legal": "Legal",
-    "terms": "Terms of use",
-    "privacy": "Privacy policy",
-    "refund": "Refund policy",
-    "grievance": "Grievance officer",
-    "partners": "For partners",
-    "forDoctors": "For doctors",
-    "forClinics": "For clinics",
-    "forShops": "For medical shops",
+    "support": "Support",
+    "email": "Email",
+    "phone": "Phone",
+    "hours": "Hours",
+    "social": "Follow us",
+    "groups": {
+      "findCare": "Find care",
+      "account": "Your account",
+      "help": "Help and company",
+      "legal": "Legal"
+    },
+    "links": {
+      "doctors": "Doctors",
+      "clinics": "Clinics",
+      "consult": "Online consultation",
+      "shops": "Medical shops near you",
+      "medicines": "Medicines",
+      "uploadPrescription": "Upload prescription",
+      "healthAssistant": "Health assistant",
+      "login": "Login or Sign up",
+      "appointments": "My appointments",
+      "account": "Profile and privacy settings",
+      "trackOrder": "Track an order",
+      "help": "Help centre and FAQs",
+      "contact": "Contact us",
+      "complaint": "Report a problem or complaint",
+      "refundStatus": "Refund status",
+      "about": "About us",
+      "trust": "Trust and safety",
+      "accessibility": "Accessibility",
+      "terms": "Terms of use",
+      "privacy": "Privacy policy",
+      "refundPolicy": "Refund and cancellation policy",
+      "grievance": "Grievance officer",
+      "dataRights": "Your data rights: access, correction, deletion",
+      "consent": "Consent preferences"
+    },
+    "trust": {
+      "label": "Our commitments",
+      "reviewed": "Profiles are reviewed by HCQ Care before listing",
+      "privacy": "Your health data is private",
+      "payments": "Secure online payments",
+      "verifiedLink": "What does Verified mean?"
+    },
     "disclaimer": "A-CureXpress does not provide emergency care. In an emergency call 112.",
-    "copyright": "© {year} HCQ Care Private Limited. All rights reserved."
+    "disclaimerConsult": "Online consultations do not replace emergency or in-person care when needed.",
+    "copyright": "© {year} HCQ Care Private Limited. All rights reserved.",
+    "cin": "CIN: {cin}",
+    "gstin": "GSTIN: {gstin}",
+    "backToTop": "Back to top",
+    "officeHeading": "Registered office",
+    "bottom": {
+      "label": "More from A-CureXpress",
+      "help": "Help centre",
+      "contact": "Contact us",
+      "sitemap": "Sitemap"
+    }
   },
   "pages": {
     "doctors": "Doctors",
@@ -308,42 +354,31 @@
     "contact": "Contact",
     "terms": "Terms of use",
     "privacy": "Privacy policy",
-    "refund-policy": "Refund policy",
+    "refund-policy": "Refund and cancellation policy",
     "grievance": "Grievance officer",
-    "for-doctors": "For doctors",
-    "for-clinics": "For clinics",
-    "for-shops": "For medical shops",
     "specialities": "Specialities",
     "clinics": "Clinics",
     "account": "Account",
     "medicines": "Medicines",
-    "health-assistant": "AI Health Consultant"
+    "health-assistant": "AI Health Consultant",
+    "appointments": "My appointments",
+    "orders": "Track an order",
+    "account-privacy": "Consent and privacy settings",
+    "prescriptions-upload": "Upload prescription",
+    "help": "Help centre and FAQs",
+    "help-refunds": "Refund status",
+    "accessibility": "Accessibility",
+    "data-rights": "Your data rights",
+    "cart": "Cart"
   },
   "categories": {
     "label": "Browse categories",
     "consultOnline": "Consult online",
     "clinicVisit": "Clinic visit",
     "shopsNearMe": "Shops near me",
-    "allSpecialities": "All specialities"
-  },
-  "joinUs": {
-    "title": "Grow your practice with A-CureXpress",
-    "subtitle": "Free listing after verification. Patients see your real schedule and fees.",
-    "doctor": {
-      "title": "I am a doctor",
-      "body": "Offer clinic visits, online consultations or both. Get the Verified badge after checks.",
-      "cta": "Join as a doctor"
-    },
-    "clinic": {
-      "title": "I run a clinic",
-      "body": "List your clinic once and add all your doctors, each with their own schedule.",
-      "cta": "List your clinic"
-    },
-    "shop": {
-      "title": "I own a medical shop",
-      "body": "Appear on the map with your verified address, hours and services.",
-      "cta": "Register your shop"
-    }
+    "allSpecialities": "All specialities",
+    "medicines": "Medicines",
+    "healthAssistant": "Health assistant"
   },
   "promises": {
     "label": "Our promises",
@@ -362,6 +397,163 @@
     "bestPrices": {
       "title": "Best Prices",
       "body": "Price match guarantee"
+    }
+  },
+  "partnerBand": {
+    "cta": "Become a partner",
+    "opensPartnerSite": "(opens the partner site)"
+  },
+  "sitemap": {
+    "title": "Sitemap",
+    "intro": "All public pages on A-CureXpress.",
+    "home": "Home"
+  },
+  "auth": {
+    "panelTitle": "Log in or sign up",
+    "close": "Close",
+    "back": "Back",
+    "or": "or",
+    "noMethods": "Sign-in is not open yet. Please check back soon.",
+    "unavailableNotice": "Sign-in is not available right now. Please try again later.",
+    "noscript": "Please turn on JavaScript in your browser to log in.",
+    "phone": {
+      "title": "Log in or sign up",
+      "subtitle": "We will send a 6-digit code to your mobile number.",
+      "label": "Mobile number",
+      "prefix": "+91",
+      "placeholder": "10-digit number",
+      "continue": "Continue",
+      "useInstead": "Use mobile number instead"
+    },
+    "email": {
+      "title": "Log in or sign up",
+      "subtitle": "We will send a 6-digit code to your email.",
+      "label": "Email address",
+      "placeholder": "name@example.com",
+      "continue": "Continue",
+      "useInstead": "Use email instead"
+    },
+    "google": "Continue with Google",
+    "otp": {
+      "title": "Enter the code",
+      "sentTo": "We sent a 6-digit code to {destination}.",
+      "change": "Change",
+      "label": "6-digit code",
+      "verify": "Verify code",
+      "resend": "Send a new code",
+      "resendIn": "You can ask for a new code in {seconds} s",
+      "resent": "A new code is on its way."
+    },
+    "finish": {
+      "title": "Finish sign-up",
+      "subtitle": "One last step before you continue.",
+      "nameLabel": "Full name",
+      "nameHint": "As it should appear on bookings.",
+      "terms": "I am 18 or older and I agree to the <terms>Terms of use</terms> and <privacy>Privacy policy</privacy>.",
+      "newTab": "(opens in a new tab)",
+      "marketing": "Send me health tips and offers. I can change this later in my profile.",
+      "submit": "Finish sign-up"
+    },
+    "stepUp": {
+      "title": "Confirm it is you",
+      "subtitle": "This account has not been used for a while. Please confirm it is yours.",
+      "sendEmail": "Send a code to {email}",
+      "google": "Confirm with Google",
+      "question": "Is this your account?",
+      "yes": "Yes, this is my account",
+      "no": "No, this is a new number",
+      "noHelp": "Mobile numbers are sometimes given to new owners. Contact us and we will help you."
+    },
+    "pending": {
+      "sending": "Sending code…",
+      "verifying": "Checking code…",
+      "saving": "Saving…"
+    },
+    "success": "You are logged in.",
+    "errors": {
+      "invalid_or_expired": "That code is wrong or has expired. Check it, or ask for a new code.",
+      "too_many_attempts": "Too many tries for this code. Ask for a new code.",
+      "rate_limited": "Too many requests. Please wait a few minutes and try again.",
+      "captcha_failed": "We could not complete the security check. Please try again.",
+      "network_error": "You seem to be offline. Check your connection and try again.",
+      "method_disabled": "This sign-in option is not available right now. Please try another one.",
+      "unavailable": "Something went wrong on our side. Please try again.",
+      "invalid_input": "Please check what you entered.",
+      "invalid_phone": "Enter a 10-digit Indian mobile number.",
+      "invalid_email": "Enter a valid email address.",
+      "invalid_code": "Enter the 6-digit code.",
+      "invalid_name": "Enter your name using 2 to 80 letters.",
+      "terms_required": "Tick the box to continue.",
+      "in_use_phone": "This number is already in use.",
+      "in_use_email": "This email is already in use. Log in with it, or use a different email.",
+      "in_use_google": "This Google account is already in use.",
+      "cancelled": "Nothing was changed."
+    },
+    "header": {
+      "login": "Login / Sign up",
+      "loginShort": "Login",
+      "finishSignup": "Finish sign-up",
+      "confirmIdentity": "Confirm it is you"
+    },
+    "userMenu": {
+      "label": "Account menu for {name}",
+      "appointments": "My appointments",
+      "profile": "Profile",
+      "logout": "Log out"
+    }
+  },
+  "account": {
+    "title": "Profile",
+    "intro": "Your sign-in details. More profile settings are coming soon.",
+    "sectionContacts": "Sign-in details",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Mobile number",
+    "google": "Google",
+    "notAdded": "Not added",
+    "connected": "Connected",
+    "notConnected": "Not connected",
+    "addPhone": "Add mobile number",
+    "addEmail": "Add email",
+    "connectGoogle": "Connect Google",
+    "sendCode": "Send code",
+    "verify": "Verify code",
+    "cancel": "Cancel",
+    "codeSent": "Enter the 6-digit code we sent to {destination}.",
+    "sectionMessages": "Messages",
+    "marketing": "Send me health tips and offers",
+    "marketingSaved": "Your choice is saved.",
+    "logout": "Log out",
+    "results": {
+      "added_phone": "Mobile number added.",
+      "added_email": "Email added. You can now also use it to log in.",
+      "google": "Google is connected. You can now also use it to log in."
+    },
+    "appointmentsLink": "My appointments"
+  },
+  "appointments": {
+    "title": "My appointments",
+    "empty": "You have no appointments yet. Bookings will show here once booking opens.",
+    "findDoctor": "Find a doctor"
+  },
+  "location": {
+    "title": "Deliver to",
+    "current": "Current location: {place}",
+    "change": "change location",
+    "close": "Close",
+    "useCurrent": "Use my current location",
+    "detecting": "Finding your location…",
+    "or": "or",
+    "pincodeLabel": "Enter a pincode",
+    "apply": "Apply",
+    "errors": {
+      "detect_denied": "Location is blocked for this site. Allow it in your browser's site settings (the icon next to the address bar), or enter a pincode.",
+      "detect_unsupported": "Your browser cannot share a location. Please enter a pincode.",
+      "detect_outside": "We serve locations in India only. Please enter an Indian pincode.",
+      "detect_unavailable": "We could not find your location just now. Please try again or enter a pincode.",
+      "invalid_pincode": "Enter a 6-digit pincode.",
+      "pincode_not_found": "We could not find this pincode. Please check it.",
+      "unavailable": "Location lookup is not available right now. Please try again."
     }
   }
 }

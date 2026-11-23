@@ -3,3 +3,64 @@
 @import "shadcn/tailwind.css";
 /* Brand tokens, theme, base styles and shared utilities (bg-hero, scroller, panel, ...). */
 @import "@acurexpress/ui/styles.css";
+
+/*
+ * Hero slide accents (gradients only inside banners, §25). Each runs from its darkest stop at the
+ * text side: top-to-bottom on mobile (text on top), left-to-right from md (text on the left).
+ * White text always sits on the dark start (deep blue 10:1, brand blue 4.9:1, green-ink 7:1);
+ * teal is the far end behind the illustration only.
+ */
+@utility hero-accent-doctors {
+  background-image: linear-gradient(
+    var(--hero-angle, 172deg),
+    var(--deep-blue) 0%,
+    var(--deep-blue) 35%,
+    var(--brand-blue) 100%
+  );
+}
+
+@utility hero-accent-online {
+  background-image: linear-gradient(
+    var(--hero-angle, 172deg),
+    var(--brand-blue) 0%,
+    var(--brand-blue) 45%,
+    var(--teal) 115%
+  );
+}
+
+@utility hero-accent-shops {
+  background-image: linear-gradient(
+    var(--hero-angle, 172deg),
+    var(--green-ink) 0%,
+    var(--brand-green) 45%,
+    var(--teal) 110%
+  );
+}
+
+@utility hero-accent-medicines {
+  background-image: linear-gradient(
+    var(--hero-angle, 172deg),
+    var(--deep-blue) 0%,
+    var(--brand-blue) 60%,
+    var(--teal) 120%
+  );
+}
+
+@utility hero-accent-assistant {
+  background-image: linear-gradient(
+    var(--hero-angle, 172deg),
+    var(--navy) 0%,
+    var(--deep-blue) 55%,
+    var(--brand-blue) 100%
+  );
+}
+
+/* Faint plus-grid texture for hero backdrops (decorative). */
+@utility bg-plus-grid {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M16 11v10M11 16h10' stroke='white' stroke-opacity='.14' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Emergency bar dismissed earlier in this session (set before paint, see (public)/layout.tsx). */
+html[data-emergency-dismissed] [data-emergency-bar] {
+  display: none;
+}

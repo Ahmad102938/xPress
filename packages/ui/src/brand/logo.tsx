@@ -6,9 +6,12 @@ import { cn } from "../lib/utils";
  */
 export function Logo({
   className,
+  textClassName,
   tone = "default",
 }: {
   className?: string;
+  /** e.g. "sr-only md:not-sr-only" to show only the mark on small screens (name stays readable). */
+  textClassName?: string;
   tone?: "default" | "light";
 }) {
   return (
@@ -37,6 +40,7 @@ export function Logo({
         className={cn(
           "text-lg leading-none font-extrabold tracking-tight whitespace-nowrap",
           tone === "light" ? "text-white" : "text-ink",
+          textClassName,
         )}
       >
         A-Cure<span className={tone === "light" ? "text-white" : "text-brand-green"}>X</span>press

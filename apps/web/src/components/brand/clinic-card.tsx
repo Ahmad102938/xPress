@@ -9,7 +9,7 @@ import { ModeChips } from "./mode-chip";
 export function ClinicCard({ clinic }: { clinic: ClinicSummary }) {
   const t = useTranslations("clinics");
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-panel transition hover:border-brand-green hover:shadow-md">
+    <article className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-panel shadow-sm transition hover:border-brand-green hover:shadow-md motion-safe:hover:-translate-y-0.5">
       <Image
         src="/images/clinic-placeholder.svg"
         alt={t("photoAlt", { name: clinic.name })}
@@ -29,7 +29,9 @@ export function ClinicCard({ clinic }: { clinic: ClinicSummary }) {
           <Stethoscope aria-hidden="true" className="size-4 shrink-0 text-muted" />
           {t("doctors", { count: clinic.doctorsCount })}
         </p>
-        <RatingStars rating={clinic.rating} count={clinic.ratingCount} />
+        {clinic.rating !== undefined && (
+          <RatingStars rating={clinic.rating} count={clinic.ratingCount} />
+        )}
         <ModeChips modes={clinic.modes} />
         <Button asChild variant="book" className="mt-auto w-full">
           <Link href="/clinics" aria-describedby={`${clinic.id}-name`}>

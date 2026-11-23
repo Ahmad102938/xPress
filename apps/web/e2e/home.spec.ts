@@ -42,7 +42,7 @@ for (const viewport of viewports) {
       for (const heading of [
         "Browse by speciality",
         "Verified doctors near you",
-        "Partner clinics",
+        "Clinics on A-CureXpress",
         "Medical shops near you",
         "How it works",
         "Why you can trust us",
@@ -144,4 +144,23 @@ test("CTA targets exist; flag-off pages are 404", async ({ request }) => {
   for (const path of ["/medicines", "/health-assistant"]) {
     expect((await request.get(path)).status(), path).toBe(404);
   }
+});
+
+test.describe("locale redirects (unchanged by the auth proxy)", () => {
+  test("/en paths redirect to the unprefixed English URL", async ({ page }) => {
+    const response = await page.goto("/en/doctors");
+    expect(new URL(page.url()).pathname).toBe("/doctors");
+    expect(response?.ok()).toBe(true);
+  });
+
+  test("a Hindi browser on / is sent to /hi", async ({ browser }) => {
+    const context = await browser.newContext({
+      locale: "hi-IN",
+      extraHTTPHeaders: { "accept-language": "hi-IN,hi;q=0.9" },
+    });
+    const page = await context.newPage();
+    await page.goto("/");
+    expect(new URL(page.url()).pathname).toBe("/hi");
+    await context.close();
+  });
 });

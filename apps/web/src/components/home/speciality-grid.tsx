@@ -1,4 +1,3 @@
-import { Stethoscope } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SpecialityTile } from "@/components/brand/speciality-tile";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -12,8 +11,7 @@ export function SpecialityGrid() {
         id="specialities-title"
         title={t("title")}
         subtitle={t("subtitle")}
-        icon={Stethoscope}
-        iconClassName="bg-brand-blue text-white"
+        accent="blue"
         viewAllHref="/specialities"
       />
       <ul className="grid grid-cols-4 gap-2 md:grid-cols-8 md:gap-3">

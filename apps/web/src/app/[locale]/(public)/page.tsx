@@ -3,9 +3,8 @@ import { CategoryStrip } from "@/components/home/category-strip";
 import { ClinicsRow } from "@/components/home/clinics-row";
 import { DoctorsRow } from "@/components/home/doctors-row";
 import { Faq } from "@/components/home/faq";
-import { HeroCarousel } from "@/components/home/hero-carousel";
+import { HeroCarousel } from "@/components/home/hero/hero-carousel";
 import { HowItWorks } from "@/components/home/how-it-works";
-import { JoinUs } from "@/components/home/join-us";
 import { PatientStories } from "@/components/home/patient-stories";
 import { AiPromo, ConsultPromo } from "@/components/home/promo-bands";
 import { QuickActions } from "@/components/home/quick-actions";
@@ -31,9 +30,12 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     <>
       <h1 className="sr-only">{t("title")}</h1>
       <CategoryStrip flags={flags} />
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 md:gap-6 md:py-6">
-        <HeroCarousel flags={flags} />
-        <ServicePromises />
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 pt-3 pb-4 md:gap-5 md:pb-6">
+        {/* Hero and store claims stay together so both fit above the fold at 1280x720. */}
+        <div className="flex flex-col gap-3">
+          <HeroCarousel flags={flags} />
+          <ServicePromises />
+        </div>
         <QuickActions flags={flags} />
         <TrustStrip />
         <SpecialityGrid />
@@ -45,7 +47,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         {flags.aiConsultant && <AiPromo />}
         <WhyTrust />
         <PatientStories />
-        <JoinUs flags={flags} />
         <Faq />
       </div>
     </>

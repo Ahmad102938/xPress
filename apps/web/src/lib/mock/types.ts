@@ -47,12 +47,16 @@ export interface ClinicSummary {
   name: string;
   area: string;
   doctorsCount: number;
-  rating: number;
-  ratingCount: number;
+  /**
+   * Only real, moderated ratings (open point G11). Sample clinics have none, so no invented
+   * review numbers appear on the page (hard rule 7).
+   */
+  rating?: number;
+  ratingCount?: number;
   modes: readonly ConsultationMode[];
 }
 
-export type TrustStatKey = "verifiedDoctors" | "partnerClinics" | "pilotDistricts" | "privacy";
+export type TrustStatKey = "verifiedDoctors" | "listedClinics" | "pilotDistricts" | "privacy";
 
 export interface TrustStatItem {
   key: TrustStatKey;

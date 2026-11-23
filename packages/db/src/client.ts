@@ -1,13 +1,15 @@
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
+import type { Database } from "./database.types";
 import { getSupabasePublicEnv } from "./env";
 
 /**
- * Browser Supabase client. Uses the anon key and the user's session, so RLS always applies.
- * TODO(db): add the generated `Database` type once `pnpm db:types` has a schema to read.
+ * Browser Supabase client, kept for future public reads only.
+ * Do NOT use it for auth: session cookies are httpOnly, so it cannot see the session
+ * (docs/specs/auth.md G8). Sign-in, sign-out and user data go through server actions.
  */
 export function createClient() {
   const { url, anonKey } = getSupabasePublicEnv();
-  return createBrowserClient(url, anonKey);
+  return createBrowserClient<Database>(url, anonKey);
 }

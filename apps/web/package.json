@@ -10,13 +10,14 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:auth": "playwright test -c playwright.auth.config.ts",
+    "test:prerender": "node scripts/check-prerender.mjs"
   },
   "dependencies": {
     "@acurexpress/core": "workspace:*",
     "@acurexpress/db": "workspace:*",
     "@acurexpress/ui": "workspace:*",
-    "cn": "^0.5.2",
     "lucide-react": "^1.77.0",
     "next": "16.4.6",
     "next-intl": "^4.15.3",

@@ -1,3 +1,7 @@
 -- A-CureXpress local seed data.
 -- Synthetic data only: obviously fake names, numbers and addresses. Never copy production data here.
 -- Intentionally empty until the first migrations land (see docs/SUPABASE.md section 7, "Planned migration order").
+--
+-- Auth (docs/specs/auth.md): no auth users, profiles or consents are seeded. pgTAP tests and the
+-- auth e2e suite create their own synthetic users (example.test emails, fake +91 900 numbers)
+-- and clean up after themselves. Local test phone numbers live in config.toml [auth.sms.test_otp].

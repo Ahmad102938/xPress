@@ -1,6 +1,7 @@
 docs/
 pnpm-lock.yaml
 .next/
+.next-auth/
 .turbo/
 node_modules/
 supabase/.temp/
@@ -11,3 +12,4 @@ AGENTS.md
 .remember/
 CLAUDE.md
 README.md
+supabase/signing_keys.json

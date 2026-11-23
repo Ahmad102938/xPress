@@ -1,62 +1,64 @@
-import { MapPin, X } from "lucide-react";
+"use client";
+
+import { ChevronDown, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@acurexpress/ui";
+import { locationLabel, useLocation } from "@/features/location/location-provider";
 
 /**
- * Static location chip. Uses the native `popover` attribute: no JavaScript, Escape and
- * light-dismiss built in. TODO(location): city/PIN search and "use my location" (with permission).
+ * Header location (Apollo-style). Desktop: pin, "Deliver to" and the place. Phones: one line
+ * "Deliver to Bhopal 462001", truncated with an ellipsis when space runs out. Opens the
+ * "Deliver to" sheet (rendered once, by LocationSheetLazy in the site shell).
  */
-export function LocationPicker({ id, className }: { id: string; className?: string }) {
-  const t = useTranslations("header");
-  const popoverId = `${id}-popover`;
+export function LocationPicker({
+  variant,
+  className,
+}: {
+  variant: "desktop" | "mobile";
+  className?: string;
+}) {
+  const t = useTranslations("location");
+  const { location, open } = useLocation();
+  const label = locationLabel(location);
+
   return (
     <>
-      <button
-        type="button"
-        popoverTarget={popoverId}
-        aria-label={t("chooseLocation")}
-        className={cn(
-          "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-1 rounded-lg border border-line bg-panel px-2 text-sm text-ink hover:border-brand-blue",
-          className,
-        )}
-      >
-        <MapPin aria-hidden="true" className="size-5 shrink-0 text-brand-blue" />
-        <span className="hidden max-w-40 truncate lg:inline">{t("chooseLocation")}</span>
-      </button>
-      <div
-        id={popoverId}
-        popover="auto"
-        role="dialog"
-        aria-labelledby={`${popoverId}-title`}
-        className="m-auto w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-line bg-panel p-4 text-body shadow-xl backdrop:bg-ink/40"
-      >
-        <div className="flex items-start justify-between gap-2">
-          <h2 id={`${popoverId}-title`} className="text-lg font-bold">
-            {t("locationDialogTitle")}
-          </h2>
-          <button
-            type="button"
-            popoverTarget={popoverId}
-            popoverTargetAction="hide"
-            aria-label={t("locationClose")}
-            className="-mt-2 -mr-2 flex size-11 cursor-pointer items-center justify-center rounded-md hover:bg-page"
-          >
-            <X aria-hidden="true" className="size-5" />
-          </button>
-        </div>
-        <label htmlFor={`${popoverId}-input`} className="mt-2 block text-sm font-medium text-ink">
-          {t("locationLabel")}
-        </label>
-        <input
-          id={`${popoverId}-input`}
-          type="text"
-          inputMode="text"
-          autoComplete="postal-code"
-          placeholder={t("locationPlaceholder")}
-          className="mt-1 h-11 w-full rounded-md border border-input px-3 text-base text-ink placeholder:text-muted"
-        />
-        <p className="mt-2 text-sm text-body">{t("locationNote")}</p>
-      </div>
+      {variant === "desktop" ? (
+        <button
+          type="button"
+          onClick={open}
+          className={cn(
+            "inline-flex min-h-11 max-w-56 cursor-pointer items-center gap-2 rounded-lg px-2 text-left hover:bg-tint-blue",
+            className,
+          )}
+        >
+          <MapPin aria-hidden="true" className="size-5 shrink-0 text-brand-blue" />
+          <span className="min-w-0">
+            <span className="block text-[13px] leading-tight text-body">{t("title")}</span>{" "}
+            <span className="flex items-center gap-1 text-sm leading-tight font-semibold text-ink">
+              <span className="truncate">{label}</span>
+              <span className="sr-only">, {t("change")}</span>
+              <ChevronDown aria-hidden="true" className="size-4 shrink-0" />
+            </span>
+          </span>
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={open}
+          className={cn(
+            "flex min-h-11 min-w-0 cursor-pointer flex-col justify-center text-left",
+            className,
+          )}
+        >
+          <span className="text-[13px] leading-tight text-body">{t("title")}</span>{" "}
+          <span className="flex min-w-0 items-center gap-1 text-sm leading-tight font-semibold text-ink">
+            <span className="truncate">{label}</span>
+            <ChevronDown aria-hidden="true" className="size-4 shrink-0" />
+          </span>
+          <span className="sr-only">, {t("change")}</span>
+        </button>
+      )}
     </>
   );
 }

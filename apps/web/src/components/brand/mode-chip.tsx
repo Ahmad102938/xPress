@@ -1,9 +1,12 @@
-import { MapPin, Video } from "lucide-react";
+import { Building2, Video } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@acurexpress/ui";
 import type { ConsultationMode } from "@/lib/mock/types";
 
-/** Consultation mode label: video icon for Online, map pin for At clinic (§25). Icon plus text. */
+/**
+ * Consultation mode label (§25, brief p.8 and p.13): Online = video icon, blue; At clinic = building
+ * icon, green. The same icon and tint are used for these two choices everywhere on the page.
+ */
 export function ModeChip({ mode }: { mode: ConsultationMode }) {
   const t = useTranslations("doctors");
   return mode === "online" ? (
@@ -13,7 +16,7 @@ export function ModeChip({ mode }: { mode: ConsultationMode }) {
     </Badge>
   ) : (
     <Badge variant="green">
-      <MapPin aria-hidden="true" />
+      <Building2 aria-hidden="true" />
       {t("atClinic")}
     </Badge>
   );

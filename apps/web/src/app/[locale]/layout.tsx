@@ -24,7 +24,15 @@ const devanagari = Noto_Sans_Devanagari({
 });
 
 /** Only these namespaces are sent to the browser (client components). Keeps the payload small. */
-const CLIENT_NAMESPACES = ["hero", "search", "header", "nav"] as const;
+const CLIENT_NAMESPACES = [
+  "hero",
+  "search",
+  "header",
+  "nav",
+  "auth",
+  "account",
+  "location",
+] as const;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -54,7 +62,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   );
 
   return (
+    // suppressHydrationWarning: an inline script may add data-emergency-dismissed before hydration.
     <html
+      suppressHydrationWarning
       lang={locale}
       className={locale === "hi" ? `${inter.variable} ${devanagari.variable}` : inter.variable}
     >

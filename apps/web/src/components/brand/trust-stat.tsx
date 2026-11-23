@@ -38,7 +38,7 @@ export function TrustStat({
         <span className={value ? "text-sm text-body" : "block text-[15px] font-bold text-ink"}>
           {label}
         </span>
-        {detail && <span className="block text-[13px] text-muted">{detail}</span>}
+        {detail && <span className="block text-[13px] text-body">{detail}</span>}
       </p>
     </div>
   );

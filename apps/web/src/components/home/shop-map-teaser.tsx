@@ -13,7 +13,7 @@ export function ShopMapTeaser() {
   return (
     <section
       aria-labelledby="shops-map-title"
-      className="panel grid grid-cols-1 overflow-hidden md:grid-cols-2"
+      className="grid grid-cols-1 overflow-hidden rounded-xl bg-tint-cream md:grid-cols-2"
       data-testid="shops-map-section"
     >
       <Image

@@ -1,4 +1,3 @@
-import { Building2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ClinicCard } from "@/components/brand/clinic-card";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -8,13 +7,16 @@ import { SampleDataNote } from "./sample-data-note";
 export function ClinicsRow() {
   const t = useTranslations("clinics");
   return (
-    <section aria-labelledby="clinics-title" className="panel p-4" data-testid="clinics-section">
+    <section
+      aria-labelledby="clinics-title"
+      className="rounded-xl bg-tint-green p-4 md:p-5"
+      data-testid="clinics-section"
+    >
       <SectionHeader
         id="clinics-title"
         title={t("title")}
         subtitle={t("subtitle")}
-        icon={Building2}
-        iconClassName="bg-amber text-on-amber"
+        accent="green"
         viewAllHref="/clinics"
       />
       <ul

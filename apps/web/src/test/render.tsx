@@ -3,15 +3,17 @@ import { render, type RenderOptions } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactElement } from "react";
 import en from "@/i18n/messages/en.json";
+import hi from "@/i18n/messages/hi.json";
 
-/** Renders with the English messages (app + shared UI strings), as components see them at runtime. */
-export function renderWithIntl(ui: ReactElement, options?: RenderOptions) {
+const messages = { en: { ...uiMessages.en, ...en }, hi: { ...uiMessages.hi, ...hi } };
+
+/** Renders with the app + shared UI messages, as components see them at runtime (English by default). */
+export function renderWithIntl(
+  ui: ReactElement,
+  { locale = "en", ...options }: RenderOptions & { locale?: "en" | "hi" } = {},
+) {
   return render(
-    <NextIntlClientProvider
-      locale="en"
-      messages={{ ...uiMessages.en, ...en }}
-      timeZone="Asia/Kolkata"
-    >
+    <NextIntlClientProvider locale={locale} messages={messages[locale]} timeZone="Asia/Kolkata">
       {ui}
     </NextIntlClientProvider>,
     options,

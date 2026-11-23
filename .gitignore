@@ -12,6 +12,7 @@ playwright/.cache/
 
 # next.js
 .next/
+.next-auth/
 out/
 build/
 

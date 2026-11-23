@@ -5,14 +5,14 @@ import { trustStats, type TrustStatKey } from "@/lib/mock";
 
 const tones: Record<TrustStatKey, "blue" | "green" | "amber" | "navy"> = {
   verifiedDoctors: "blue",
-  partnerClinics: "green",
+  listedClinics: "green",
   pilotDistricts: "amber",
   privacy: "navy",
 };
 
 const icons: Record<TrustStatKey, LucideIcon> = {
   verifiedDoctors: ShieldCheck,
-  partnerClinics: Building2,
+  listedClinics: Building2,
   pilotDistricts: MapPinned,
   privacy: Lock,
 };
@@ -22,7 +22,7 @@ export function TrustStrip() {
   const hasPlaceholders = trustStats.some((stat) => stat.isPlaceholder);
 
   return (
-    <section aria-labelledby="trust-title" className="panel p-4">
+    <section aria-labelledby="trust-title" className="rounded-xl bg-tint-blue p-4 md:px-6">
       <h2 id="trust-title" className="sr-only">
         {t("label")}
       </h2>
@@ -40,7 +40,7 @@ export function TrustStrip() {
           </li>
         ))}
       </ul>
-      {hasPlaceholders && <p className="mt-3 text-[13px] text-muted">{t("placeholderNote")}</p>}
+      {hasPlaceholders && <p className="mt-3 text-[13px] text-body">{t("placeholderNote")}</p>}
     </section>
   );
 }

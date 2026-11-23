@@ -13,6 +13,7 @@ const shared = {
 
 const commonIgnores = [
   ".next/**",
+  ".next-auth/**",
   "out/**",
   "build/**",
   "next-env.d.ts",

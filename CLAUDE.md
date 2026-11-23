@@ -13,7 +13,7 @@ Healthcare platform for India (HCQ Care Private Limited, built by Flucks). Patie
 3. `docs/TESTING.md`: what to test and how. `docs/DEPLOYMENT.md`: Vercel projects, env, migrate-then-deploy order.
 4. `AGENTS.md`: Next.js 16 differs from older versions. Check `apps/web/node_modules/next/dist/docs/` before using an API you are unsure of.
 
-**Never silently edit `docs/ACureXpress_Product_Context.md`.** Propose changes to it (for example a new decision) in your report and let the project lead apply them. Other files in `docs/` change only when a command or path they describe changes; new files there are limited to `docs/rls-matrix.md`, `docs/specs/*` (approved EGM design docs) and `docs/DEPLOYMENT.md`. `docs/designs/` holds Stitch exports: visual reference only, never copy their code.
+**Never silently edit `docs/ACureXpress_Product_Context.md`.** Propose changes to it (for example a new decision) in your report and let the project lead apply them. Other files in `docs/` change only when a command or path they describe changes; new files there are limited to `docs/rls-matrix.md`, `docs/specs/*` (approved EGM design docs), `docs/DEPLOYMENT.md` and `docs/AUTH.md` (owner-approved for sign-in, as was the one grants rule in `docs/SUPABASE.md` §7). `docs/designs/` holds Stitch exports: visual reference only, never copy their code.
 
 ## Stack
 
@@ -28,14 +28,17 @@ Turborepo + pnpm workspaces · Next.js 16 (App Router, `cacheComponents`, Turbop
 | `apps/admin` | `@acurexpress/admin` | HCQ staff console, admin.acurexpress.com (dev :3002). Placeholder, `noindex` |
 | `packages/config` | `@acurexpress/config` | tsconfig bases, ESLint flat configs (with the boundary rule), Prettier options |
 | `packages/ui` | `@acurexpress/ui` | shadcn primitives, brand components (badges, rating, logo), `cn`, design tokens, their `badges`/`rating` strings |
-| `packages/db` | `@acurexpress/db` | Supabase clients (`/client`, `/server`, `/middleware`) and generated types |
+| `packages/db` | `@acurexpress/db` | Supabase clients (`/client`, `/server`, `/middleware`, server-only `/admin`), cookie options and generated types |
 | `packages/core` | `@acurexpress/core` | Feature flags, constants, zod schemas, pure domain helpers and types |
 | `supabase/` | (root) | ONE database for all apps: migrations, pgTAP tests, functions, `seed.sql` (synthetic only) |
 | `docs/` | (root) | Product context, SOPs, `specs/` for approved design docs |
 
 Inside `apps/web/src`:
-- `app/[locale]/(public)`: visitor pages. `[slug]/page.tsx` serves "Coming soon" stubs; a real page at the same path wins.
-- `app/[locale]/(patient)`: placeholder. Add a server-side auth and role guard before any page. The old `(partner)` and `(admin)` route groups are superseded by `apps/partner` and `apps/admin`; do not add pages there.
+- `app/[locale]/(public)`: visitor pages. `[...slug]/page.tsx` serves "Coming soon" stubs; a real page at the same path wins. `login/page.tsx` is the page version of the sign-in panel.
+- `app/[locale]/(patient)`: signed-in pages (`/account`, `/appointments`). Every page calls `requirePatient()` (`features/auth/server/require-patient.ts`) inside its own `<Suspense>`; the layout holds no auth logic. Both groups render `components/layout/site-shell.tsx`.
+- `features/auth`: sign-in (docs/AUTH.md, docs/specs/auth.md): server actions, the gate (`server/auth-state.ts`), rate limits, panel components. `app/auth/callback` and `app/auth/session` are not locale-prefixed; `app/api/cron/auth-cleanup` is the daily Vercel cron.
+- `features/location`: delivery location (default Bhopal 462001, browser location on first visit, "Deliver to" sheet). Saved on the device only; lookups go through `app/api/geo/*` and `lib/geo.ts` (India Post, OpenStreetMap Nominatim).
+- The web app is patient-only: partner wording and links appear ONLY in the footer partner band (`components/footer/partner-band.tsx`, switch `showPartnerBlock`, base URL `NEXT_PUBLIC_PARTNER_URL`); admin is never mentioned or linked. `e2e/patient-only.spec.ts` enforces this. Footer links live in `config/footer-links.ts`, company details in `config/company.ts` (`TODO_HCQ` placeholders are hidden in production), stub routes in `config/stub-pages.ts`.
 - `components/ui` (app-specific primitives such as `section-header`, `banner-carousel`), `brand` (cards, chips), `layout` (header, footer, nav, search), `home` (Home sections).
 - `lib/mock` (typed SAMPLE data), `config/` (page config), `i18n` (routing + messages).
 
@@ -58,9 +61,10 @@ Inside `apps/web/src`:
 | `pnpm test` | Unit tests (Vitest) in every workspace |
 | `pnpm test:e2e` | Per app: builds, starts (web :3100, partner :3101, admin :3102), runs Playwright + axe. `pnpm --filter @acurexpress/web exec playwright install chromium` once |
 | `pnpm turbo run <task> --filter=<package>` | Any task for one workspace (and its dependencies) |
-| `pnpm db:start` / `db:stop` / `db:reset` / `db:test` / `db:types` | **Local** Supabase only (Docker). `db:types` writes `packages/db/src/database.types.ts` |
+| `pnpm db:start` / `db:stop` / `db:reset` / `db:test` / `db:types` | **Local** Supabase only (Docker). `db:start` first creates the git-ignored `supabase/signing_keys.json` (`pnpm db:keys`). `db:types` writes `packages/db/src/database.types.ts` |
+| `pnpm --filter @acurexpress/web test:e2e:auth` | Sign-in e2e against the local stack (port 3200, build folder `.next-auth`). Run `apps/web/scripts/auth-e2e-env.sh` first |
 
-Env files are per app: copy `apps/<app>/.env.example` to `apps/<app>/.env.local` (the root `.env.example` lists them grouped by app). Turbo only passes declared env vars to tasks; add new ones to `turbo.json`.
+Env files are per app: copy `apps/<app>/.env.example` to `apps/<app>/.env.local` (the root `.env.example` lists them grouped by app). Sign-in adds `AUTH_METHODS`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `RATE_LIMIT_HMAC_SECRET` and `CRON_SECRET` (docs/AUTH.md). Point local development at the local stack only. Turbo only passes declared env vars to tasks; add new ones to `turbo.json`.
 
 If styles look stale after editing CSS, `rm -rf apps/<app>/.next` (Turbopack's build cache can miss CSS changes).
 
