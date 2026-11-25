@@ -2,6 +2,7 @@ docs/
 pnpm-lock.yaml
 .next/
 .next-auth/
+.next-dev-fixtures/
 .turbo/
 node_modules/
 supabase/.temp/

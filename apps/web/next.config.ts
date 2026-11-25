@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { assertProductionEnv } from "./src/config/env-check";
+import { staticHeaders } from "./src/security/static-headers";
 
 // Fails Vercel production builds that lack required env (docs/specs/auth.md R1-B1, R2-M5).
 assertProductionEnv();
@@ -25,6 +26,11 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
+  },
+  // Hardening headers on every response (docs/specs/signed-in-home.md item 24). No CSP here: the
+  // proxy sets exactly one per page (public or private level, Step 0 result R2).
+  async headers() {
+    return [{ source: "/(.*)", headers: staticHeaders(process.env) }];
   },
 };
 

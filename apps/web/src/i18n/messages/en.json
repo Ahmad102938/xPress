@@ -40,7 +40,8 @@
     "groupMedicines": "Medicines",
     "medicinesHint": "Search medicines",
     "noResults": "No suggestions. Press Enter to search.",
-    "resultsCount": "{count, plural, =0 {No suggestions} one {# suggestion} other {# suggestions}} available"
+    "resultsCount": "{count, plural, =0 {No suggestions} one {# suggestion} other {# suggestions}} available",
+    "recent": "Recent searches"
   },
   "nav": {
     "bottomLabel": "Quick navigation",
@@ -48,7 +49,10 @@
     "doctors": "Doctors",
     "consult": "Consult",
     "shops": "Shops",
-    "account": "Account"
+    "account": "Account",
+    "findCare": "Find care",
+    "appointments": "Appointments",
+    "medicines": "Medicines"
   },
   "quickActions": {
     "title": "What do you need today?",
@@ -499,12 +503,14 @@
       "label": "Account menu for {name}",
       "appointments": "My appointments",
       "profile": "Profile",
-      "logout": "Log out"
+      "logout": "Log out",
+      "account": "Account",
+      "support": "Support"
     }
   },
   "account": {
-    "title": "Profile",
-    "intro": "Your sign-in details. More profile settings are coming soon.",
+    "title": "Account",
+    "intro": "Your sign-in methods, security, consent and family profiles.",
     "sectionContacts": "Sign-in details",
     "name": "Name",
     "email": "Email",
@@ -529,12 +535,28 @@
       "added_email": "Email added. You can now also use it to log in.",
       "google": "Google is connected. You can now also use it to log in."
     },
-    "appointmentsLink": "My appointments"
+    "appointmentsLink": "My appointments",
+    "sectionMethods": "Sign-in methods",
+    "sectionConsent": "Consent settings",
+    "termsVersion": "Terms and Privacy accepted: version {version}",
+    "change": "Change"
   },
   "appointments": {
     "title": "My appointments",
     "empty": "You have no appointments yet. Bookings will show here once booking opens.",
-    "findDoctor": "Find a doctor"
+    "findDoctor": "Find a doctor",
+    "tabsLabel": "Appointment lists",
+    "tabs": {
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "cancelled": "Cancelled"
+    },
+    "emptyUpcoming": "You have no upcoming appointments.",
+    "emptyPast": "No past appointments yet.",
+    "emptyCancelled": "No cancelled appointments.",
+    "notFoundTitle": "Appointment not found",
+    "notFoundBody": "This appointment does not exist or is not linked to your account.",
+    "back": "Back to my appointments"
   },
   "location": {
     "title": "Deliver to",
@@ -555,5 +577,321 @@
       "pincode_not_found": "We could not find this pincode. Please check it.",
       "unavailable": "Location lookup is not available right now. Please try again."
     }
+  },
+  "signedIn": {
+    "notifications": "Notifications",
+    "noNotifications": "No notifications yet. Booking reminders will show here."
+  },
+  "family": {
+    "title": "Family profiles",
+    "intro": "Add children or parents you book care for. They are managed from your account and use your sign-in.",
+    "add": "Add a family member",
+    "edit": "Edit",
+    "archive": "Archive",
+    "restore": "Restore",
+    "archived": "Archived",
+    "archivedHelp": "Archived profiles are hidden from booking and kept for our records. You can restore them.",
+    "confirmArchiveTitle": "Archive {name}?",
+    "confirmArchiveBody": "{name} will be hidden from booking. Nothing is deleted, and you can restore the profile later.",
+    "cancel": "Cancel",
+    "self": "Your profile",
+    "relationships": {
+      "self": "You",
+      "child": "Child",
+      "parent": "Parent",
+      "spouse": "Spouse",
+      "sibling": "Sibling",
+      "grandparent": "Grandparent",
+      "other": "Other"
+    },
+    "errors": {
+      "not_found": "We could not find that profile.",
+      "invalid_input": "Please check what you entered.",
+      "limit_reached": "You have reached the number of family profiles one account can hold. Archive one to add another.",
+      "self_profile": "Your own profile cannot be archived.",
+      "adult_permission_required": "Tick the box to confirm you have their permission.",
+      "rate_limited": "Too many changes in a short time. Please wait a few minutes and try again.",
+      "unavailable": "Something went wrong on our side. Please try again."
+    },
+    "issues": {
+      "invalid_name": "Enter a name using 2 to 80 letters.",
+      "invalid_date": "Enter a valid date.",
+      "date_too_old": "Enter a date from 1900 onwards.",
+      "date_in_future": "The date of birth cannot be in the future.",
+      "invalid_relationship": "Choose how they are related to you.",
+      "invalid_phone": "Enter the number with the country code, for example +919000000003.",
+      "required": "This field is required.",
+      "too_long": "This is too long.",
+      "invalid_pincode": "Enter a 6-digit PIN code."
+    },
+    "switcherLabel": "Showing {name}. Switch profile",
+    "bookingFor": "Booking for: {name}",
+    "bookingForLabel": "Booking for {name}. Change who you book for",
+    "switchTo": "Show profile for",
+    "manage": "Manage family profiles",
+    "form": {
+      "addTitle": "Add a family member",
+      "editTitle": "Edit {name}",
+      "fullName": "Full name",
+      "dateOfBirth": "Date of birth",
+      "relationship": "Relationship to you",
+      "choose": "Choose",
+      "gender": "Gender (optional)",
+      "genders": {
+        "female": "Female",
+        "male": "Male",
+        "other": "Other",
+        "prefer_not_to_say": "Prefer not to say"
+      },
+      "language": "Preferred consultation language (optional)",
+      "languages": {
+        "en": "English",
+        "hi": "Hindi"
+      },
+      "noPreference": "No preference",
+      "contactPhone": "Their contact number (optional)",
+      "contactPhoneHint": "Only if they have their own phone. It is not used to sign in.",
+      "adultPermission": "I have their permission to manage their details",
+      "adultHelp": "They are 18 or older, so we need your confirmation that they agree.",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved."
+    },
+    "bookingForCaption": "Booking for",
+    "bookingForValue": "{relationship} ({name})",
+    "changeWho": ". Change who you book for"
+  },
+  "profile": {
+    "title": "Profile",
+    "intro": "Details of the person you are booking for. Switch profiles from the header.",
+    "viewing": "Showing {name}",
+    "fallbackNotice": "We switched you back to your own profile.",
+    "details": "Personal details",
+    "addresses": "Saved addresses",
+    "noAddresses": "No saved addresses yet.",
+    "addAddress": "Add an address",
+    "editAddress": "Edit address",
+    "deleteAddress": "Delete",
+    "makeDefault": "Make default",
+    "default": "Default",
+    "confirmDeleteTitle": "Delete this address?",
+    "confirmDeleteBody": "The {label} address will be removed from this profile.",
+    "avatarLabel": "{name}",
+    "notSet": "Not set",
+    "address": {
+      "label": "Label",
+      "labelHint": "For example Home or Work",
+      "line1": "House and street",
+      "line2": "Area (optional)",
+      "landmark": "Landmark (optional)",
+      "city": "City",
+      "state": "State",
+      "pincode": "PIN code",
+      "save": "Save address",
+      "cancel": "Cancel"
+    }
+  },
+  "security": {
+    "title": "Security",
+    "intro": "Sensitive changes ask you to confirm it is you if you signed in more than 15 minutes ago.",
+    "signOut": "Sign out on this device",
+    "signOutAll": "Sign out everywhere",
+    "signOutAllHelp": "Signs out every phone and computer where you are signed in.",
+    "confirmSignOutAllTitle": "Sign out of every device?",
+    "confirmSignOutAllBody": "You will need to sign in again on each device.",
+    "deleteTitle": "Delete my account",
+    "deleteHelp": "Ask us to delete your account. Nothing is deleted straight away: our support team handles the request under our data retention rules.",
+    "requestDeletion": "Request deletion",
+    "confirmDeleteTitle": "Request account deletion?",
+    "confirmDeleteBody": "You will be signed out everywhere. Your request is recorded and our support team will contact you.",
+    "typeToConfirm": "Type {word} to confirm",
+    "confirmWord": "DELETE",
+    "requested": "Deletion requested. Our support team will contact you.",
+    "cancelRequest": "Withdraw the request",
+    "cancelled": "Your deletion request was withdrawn.",
+    "cancel": "Cancel",
+    "error": "Something went wrong. Please try again."
+  },
+  "reverify": {
+    "titles": {
+      "change_phone": "Confirm it's you to change your mobile number",
+      "change_email": "Confirm it's you to change your email",
+      "add_phone": "Confirm it's you to add a mobile number",
+      "add_email": "Confirm it's you to add an email",
+      "connect_google": "Confirm it's you to connect Google",
+      "sign_out_all": "Confirm it's you to sign out everywhere",
+      "delete_request": "Confirm it's you to request account deletion"
+    },
+    "intro": "For your safety we need a fresh code. We will send it to {destination}.",
+    "useEmail": "Send to my email instead",
+    "usePhone": "Send to my mobile instead",
+    "send": "Send code",
+    "sendAgain": "Send a new code",
+    "codeLabel": "6-digit code",
+    "sent": "We sent a code to {destination}.",
+    "verify": "Confirm",
+    "cancel": "Cancel",
+    "close": "Close",
+    "noChannel": "We cannot confirm it is you right now because this account has no verified mobile number or email. Please contact support.",
+    "errors": {
+      "rate_limited": "Too many requests. Please wait a few minutes and try again.",
+      "invalid_or_expired": "That code is wrong or has expired. Ask for a new code.",
+      "too_many_attempts": "Too many tries for this code. Ask for a new code.",
+      "mismatch": "That code belongs to a different account. You have been signed out.",
+      "invalid_input": "Enter the 6-digit code.",
+      "unavailable": "Something went wrong on our side. Please try again.",
+      "captcha_failed": "We could not complete the security check. Please try again."
+    }
+  },
+  "idle": {
+    "title": "Are you still there?",
+    "body": "For your privacy, you will be signed out in {seconds} seconds because there has been no activity.",
+    "stay": "Stay signed in",
+    "signOut": "Sign out now"
+  },
+  "support": {
+    "title": "Support",
+    "intro": "Help with bookings, payments and your account.",
+    "emergencyTitle": "In an emergency",
+    "contactTitle": "Contact us",
+    "phone": "Phone",
+    "email": "Email",
+    "hours": "Hours",
+    "topicsTitle": "Common questions",
+    "bookingHelp": "Change or cancel an appointment",
+    "bookingHelpBody": "Open My appointments to see your bookings.",
+    "accountHelp": "Account, sign-in and family profiles",
+    "accountHelpBody": "Manage sign-in methods, security and family profiles in your account.",
+    "grievance": "Complaints and grievance officer",
+    "notListed": "Our contact details will be added here before launch."
+  },
+  "patientHome": {
+    "greeting": {
+      "morning": "Good morning, {name}",
+      "afternoon": "Good afternoon, {name}",
+      "evening": "Good evening, {name}",
+      "noName": "Welcome back"
+    },
+    "subtitle": "Here is what is happening with your care.",
+    "seeAll": "See all",
+    "sectionError": {
+      "title": "This section could not load.",
+      "retry": "Try again"
+    },
+    "upNext": {
+      "title": "Up next",
+      "bookTitle": "No upcoming appointments",
+      "bookBody": "Book a clinic visit or an online consultation.",
+      "bookCta": "Book a visit",
+      "join": "Join call",
+      "directions": "Get directions",
+      "checkIn": "Check in",
+      "reschedule": "Reschedule",
+      "online": "Online consultation",
+      "atClinic": "At clinic",
+      "withDoctor": "{doctor}, {speciality}",
+      "clinicHint": "Visit a doctor at a clinic near you",
+      "onlineHint": "Or talk to a doctor by video",
+      "consultCta": "Consult online",
+      "details": "View details",
+      "expand": "Show more",
+      "collapse": "Show less",
+      "allAppointments": "My appointments"
+    },
+    "attention": {
+      "title": "Needs your attention",
+      "paymentPending": "Payment pending for your booking with {doctor}",
+      "holdLeft": "Slot held for {minutes} more minutes",
+      "holdLastMinute": "Slot held for less than a minute",
+      "released": "Slot released. Please choose another time.",
+      "pay": "Complete payment",
+      "count": "{count, plural, one {# item} other {# items}}"
+    },
+    "continue": {
+      "title": "Continue where you left off",
+      "recentSearches": "Recent searches",
+      "recentlyViewed": "Recently viewed doctors",
+      "unfinished": "Finish your booking with {doctor}",
+      "resume": "Continue",
+      "clear": "Clear",
+      "unfinishedTitle": "Unfinished booking"
+    },
+    "yourDoctors": {
+      "title": "Your doctors",
+      "followUp": "Book follow-up",
+      "followUpLabel": "Book a follow-up with {doctor}"
+    },
+    "nearYou": {
+      "title": "Near you",
+      "subtitle": "Doctors and clinics near {place}",
+      "subtitleDefault": "Doctors and clinics near you"
+    },
+    "completeProfile": {
+      "title": "Complete your profile",
+      "body": "A verified mobile number and a saved address make booking faster.",
+      "verifyPhone": "Add a mobile number",
+      "addAddress": "Add an address",
+      "dismiss": "Dismiss"
+    },
+    "banner": {
+      "consult": {
+        "badge": "Online consultation",
+        "title": "Talk to a doctor from home",
+        "body": "Pick a doctor and a time, then join the video call from your phone or computer.",
+        "cta": "Consult online"
+      },
+      "prescription": {
+        "badge": "Medicines",
+        "title": "Upload your prescription",
+        "body": "Upload a valid prescription from a registered doctor to order the medicines on it.",
+        "cta": "Upload prescription"
+      }
+    },
+    "explore": {
+      "title": "Explore",
+      "clinics": {
+        "title": "Find a clinic near you",
+        "body": "See clinics, their doctors and visiting hours.",
+        "cta": "Browse clinics"
+      },
+      "specialities": {
+        "title": "Doctors by speciality",
+        "body": "From general physicians to skin, child and heart care.",
+        "cta": "See specialities"
+      },
+      "shops": {
+        "title": "Medical shops near you",
+        "body": "Find medical shops, their timings and directions.",
+        "cta": "Find shops"
+      },
+      "medicines": {
+        "title": "Medicines and essentials",
+        "body": "Order medicines and everyday health essentials.",
+        "cta": "Shop medicines"
+      }
+    },
+    "help": {
+      "title": "Help and support",
+      "bookings": {
+        "title": "Booking changes",
+        "body": "Reschedule or cancel a visit"
+      },
+      "account": {
+        "title": "Account and family",
+        "body": "Sign-in, security and family profiles"
+      },
+      "problem": {
+        "title": "Report a problem",
+        "body": "Complaints and the grievance officer"
+      },
+      "phoneLead": "Need help? Call patient support on",
+      "supportLead": "Need help?",
+      "supportLink": "Contact patient support"
+    }
+  },
+  "errors": {
+    "title": "We can't load your account right now",
+    "body": "Please try again in a moment.",
+    "retry": "Try again"
   }
 }

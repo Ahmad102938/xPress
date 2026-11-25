@@ -3,8 +3,16 @@
 import { ArrowRight, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useId, useMemo, useState, type KeyboardEvent } from "react";
+import { useId, useMemo, useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import { cn } from "@acurexpress/ui";
+import { useOptionalAuth } from "@/features/auth/components/auth-provider";
+import {
+  addRecentSearch,
+  readRecentSearches,
+  subscribeRecentSearches,
+} from "@/features/session/recent-searches";
+
+const NO_RECENT: readonly string[] = [];
 
 export interface SearchSuggestion {
   id: string;
@@ -48,9 +56,25 @@ export function SearchBar({ action, groups, includesMedicines, className }: Sear
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const signedIn = useOptionalAuth()?.session?.state === "signed_in";
+  const recent = useSyncExternalStore(subscribeRecentSearches, readRecentSearches, () => NO_RECENT);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
+    // Signed in, empty box: offer this device's recent searches (docs/specs/signed-in-home.md item 57).
+    if (!q && signedIn && recent.length) {
+      return [
+        {
+          id: "recent",
+          label: t("recent"),
+          items: recent.map((item, index) => ({
+            id: `recent-${index}`,
+            label: item,
+            href: `${action}?q=${encodeURIComponent(item)}`,
+          })),
+        },
+      ];
+    }
     if (!q) return [];
     return groups
       .map((group) => ({
@@ -60,7 +84,7 @@ export function SearchBar({ action, groups, includesMedicines, className }: Sear
           .slice(0, MAX_PER_GROUP),
       }))
       .filter((group) => group.items.length > 0);
-  }, [groups, query]);
+  }, [action, groups, query, recent, signedIn, t]);
 
   const flat = filtered.flatMap((group) => group.items);
   const groupOffsets = filtered.reduce<number[]>((offsets, group, i) => {
@@ -70,8 +94,13 @@ export function SearchBar({ action, groups, includesMedicines, className }: Sear
   const expanded = open && flat.length > 0;
   const optionId = (i: number) => `${baseId}-option-${i}`;
 
+  function remember(value: string) {
+    if (signedIn) addRecentSearch(value);
+  }
+
   function choose(item: SearchSuggestion) {
     setOpen(false);
+    remember(item.id.startsWith("recent-") ? item.label : query.trim() || item.label);
     router.push(hrefFor(item, query.trim()));
   }
 
@@ -96,7 +125,13 @@ export function SearchBar({ action, groups, includesMedicines, className }: Sear
   }
 
   return (
-    <form action={action} method="get" role="search" className={cn("relative", className)}>
+    <form
+      action={action}
+      method="get"
+      role="search"
+      className={cn("relative", className)}
+      onSubmit={() => remember(query)}
+    >
       <label htmlFor={`${baseId}-input`} className="sr-only">
         {t("label")}
       </label>

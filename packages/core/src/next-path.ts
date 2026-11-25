@@ -46,3 +46,28 @@ export function sanitizeNextPath(input: unknown, locales: readonly string[]): st
   if (pointsToAuth(input, locales) || pointsToAuth(decoded, locales)) return "/";
   return input;
 }
+
+const UUID_SEGMENT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * `sanitizeNextPath`, then cut the path at its first UUID segment so a record id never travels in
+ * `?next=` (docs/specs/signed-in-home.md item 12): `/appointments/<uuid>` becomes `/appointments`,
+ * `/hi/appointments/<uuid>/x` becomes `/hi/appointments`. Query and hash are dropped when cut.
+ */
+export function safeReturnPath(input: unknown, locales: readonly string[]): string {
+  const safe = sanitizeNextPath(input, locales);
+  const pathname = safe.split(/[?#]/, 1)[0] ?? "/";
+  const segments = pathname.split("/");
+  const cut = segments.findIndex((segment) => {
+    let decoded = segment;
+    try {
+      decoded = decodeURIComponent(segment);
+    } catch {
+      return false;
+    }
+    return UUID_SEGMENT.test(decoded);
+  });
+  if (cut === -1) return safe;
+  const kept = segments.slice(0, cut).join("/");
+  return kept === "" ? "/" : kept;
+}

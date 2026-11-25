@@ -3,7 +3,9 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@acurexpress/ui";
 import { Link } from "@/i18n/navigation";
+import { ProfileSwitcher } from "@/features/profiles/components/profile-switcher";
 import { useAuth } from "./auth-provider";
+import { NotificationsBell } from "./notifications-bell";
 import { UserMenu } from "./user-menu";
 
 /**
@@ -13,16 +15,27 @@ import { UserMenu } from "./user-menu";
  */
 export function HeaderAuth() {
   const t = useTranslations("auth.header");
-  const { session, openPanel } = useAuth();
+  const { session, openPanel, refresh } = useAuth();
 
   // On phones the bottom nav "Account" tab is the way in (it holds the same links), so the
   // header menu shows from md up only.
   if (session?.state === "signed_in") {
     return (
-      <div className="hidden md:block">
+      <div className="hidden items-center gap-1 md:flex">
+        <ProfileSwitcher
+          profiles={session.profiles}
+          selectedId={session.selectedProfileId}
+          onChanged={refresh}
+        />
+        <NotificationsBell />
         <UserMenu session={session} />
       </div>
     );
+  }
+
+  // The gate could not be read (outage): neither Login nor a menu, so nothing misleading shows.
+  if (session?.state === "unavailable") {
+    return <span aria-hidden="true" className="inline-block size-11" />;
   }
 
   if (session?.state === "needs_finish" || session?.state === "step_up") {

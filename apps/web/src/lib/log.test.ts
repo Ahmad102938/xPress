@@ -62,3 +62,40 @@ describe("logAuthEvent", () => {
     });
   });
 });
+
+describe("sanitizeAuthLog: signed-in-home events", () => {
+  it("keeps a CSP directive and only the scheme and host of the blocked URL", () => {
+    expect(
+      sanitizeAuthLog("csp.report", {
+        outcome: "ok",
+        directive: "script-src-elem",
+        blockedOrigin: "https://Evil.Example.test:8443/x.js?token=abc",
+      }),
+    ).toEqual({
+      event: "csp.report",
+      outcome: "ok",
+      directive: "script-src-elem",
+      blockedOrigin: "https://evil.example.test",
+    });
+  });
+
+  it("keeps CSP keywords and drops unknown directives and non-URLs", () => {
+    expect(
+      sanitizeAuthLog("csp.report", { directive: "made-up", blockedOrigin: "inline" }),
+    ).toEqual({
+      event: "csp.report",
+      blockedOrigin: "inline",
+    });
+    expect(sanitizeAuthLog("csp.report", { blockedOrigin: "javascript:alert(1)" })).toEqual({
+      event: "csp.report",
+    });
+  });
+
+  it("accepts the profile and re-verify outcomes", () => {
+    expect(sanitizeAuthLog("profile.change", { outcome: "limit_reached" }).outcome).toBe(
+      "limit_reached",
+    );
+    expect(sanitizeAuthLog("auth.reverify", { outcome: "mismatch" }).outcome).toBe("mismatch");
+    expect(sanitizeAuthLog("home.rewrite", { outcome: "unknown" }).outcome).toBe("unknown");
+  });
+});

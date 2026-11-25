@@ -15,9 +15,15 @@ export function normalizeIndianPhone(input: string): string | null {
   return match ? `+91${match[1]}` : null;
 }
 
-/** `+919876543210` becomes `+91 98XXXXXX10`. Input that is not a normalised number is fully masked. */
+/**
+ * `+919876544321` becomes `+91 •••••• 4321` (docs/specs/signed-in-home.md item 9): the country code
+ * and the last four digits only. Other E.164 numbers show only their last four digits, because a
+ * country code's length cannot be told without a table. Anything else is fully masked.
+ */
 export function maskPhone(normalized: string): string {
-  const match = /^\+91(\d{2})\d{6}(\d{2})$/.exec(normalized);
-  if (!match) return "+91 XXXXXXXXXX";
-  return `+91 ${match[1]}XXXXXX${match[2]}`;
+  const indian = /^\+91\d{6}(\d{4})$/.exec(normalized);
+  if (indian) return `+91 •••••• ${indian[1]}`;
+  const other = /^\+\d{4,11}(\d{4})$/.exec(normalized);
+  if (other) return `•••••• ${other[1]}`;
+  return "••••••••••";
 }

@@ -14,10 +14,13 @@ import {
   verifyAddPhone,
 } from "../actions";
 import { ErrorNotice, inputClass, type ErrorKey } from "./panel-ui";
+import { useReverify } from "./reverify-dialog";
 
 /**
- * Profile sign-in details (docs/specs/auth.md Part C, CUJ 6-8): add a phone, add an email,
- * connect Google, and the marketing choice. "Already in use" appears before any code (accepted).
+ * Sign-in methods (docs/specs/auth.md Part C, CUJ 6-8; signed-in-home item 43): add or change a
+ * phone or email, connect Google, and the marketing choice. "Already in use" appears before any
+ * code (accepted). Contacts are shown masked. Each change needs a recent sign-in: when the server
+ * answers `reauth_required`, the re-verify dialog opens and the step is retried.
  */
 
 type Editing =
@@ -51,6 +54,7 @@ export function ContactActions(props: ContactActionsProps) {
   const [marketing, setMarketingState] = useState(props.marketing);
   const [marketingSaved, setMarketingSaved] = useState(false);
   const [pending, startTransition] = useTransition();
+  const { guard, dialog } = useReverify();
 
   function begin(kind: "phone" | "email") {
     setError(null);
@@ -74,11 +78,19 @@ export function ContactActions(props: ContactActionsProps) {
         setError(editing.kind === "phone" ? "invalid_phone" : "invalid_email");
         return;
       }
+      const action =
+        editing.kind === "phone"
+          ? props.phone
+            ? "change_phone"
+            : "add_phone"
+          : props.email
+            ? "change_email"
+            : "add_email";
       startTransition(async () => {
-        const response =
-          editing.kind === "phone"
-            ? await addPhone({ phone: value })
-            : await addEmail({ email: value });
+        const response = await guard(action, () =>
+          editing.kind === "phone" ? addPhone({ phone: value }) : addEmail({ email: value }),
+        );
+        if (!response) return;
         if (!response.ok)
           setError(
             response.error === "invalid_input" && response.issue ? response.issue : response.error,
@@ -89,11 +101,21 @@ export function ContactActions(props: ContactActionsProps) {
     }
 
     const code = String(form.get("code") ?? "").replace(/\D/g, "");
+    const verifyAction =
+      editing.kind === "phone"
+        ? props.phone
+          ? "change_phone"
+          : "add_phone"
+        : props.email
+          ? "change_email"
+          : "add_email";
     startTransition(async () => {
-      const response =
+      const response = await guard(verifyAction, () =>
         editing.kind === "phone"
-          ? await verifyAddPhone({ phone: editing.value, code })
-          : await verifyAddEmail({ email: editing.value, code });
+          ? verifyAddPhone({ phone: editing.value, code })
+          : verifyAddEmail({ email: editing.value, code }),
+      );
+      if (!response) return;
       if (!response.ok) {
         setError(
           response.error === "invalid_input" && response.issue ? response.issue : response.error,
@@ -109,7 +131,8 @@ export function ContactActions(props: ContactActionsProps) {
   function google() {
     setError(null);
     startTransition(async () => {
-      const response = await connectGoogle();
+      const response = await guard("connect_google", () => connectGoogle());
+      if (!response) return;
       if (response.ok) window.location.assign(response.url);
       else setError(response.error);
     });
@@ -132,15 +155,16 @@ export function ContactActions(props: ContactActionsProps) {
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-ink">{t("sectionContacts")}</h2>
+      {dialog}
+      <h2 className="text-lg font-bold text-ink">{t("sectionMethods")}</h2>
       <dl className="mt-2">
         <div className={row}>
           <dt className="text-sm font-semibold text-ink">{t("phone")}</dt>
           <dd className="flex items-center gap-2 text-sm text-body">
-            {props.phone ?? t("notAdded")}
-            {!props.phone && editing.kind === "none" ? (
+            {props.phone ? maskPhone(props.phone) : t("notAdded")}
+            {editing.kind === "none" ? (
               <Button size="sm" variant="outline" onClick={() => begin("phone")}>
-                {t("addPhone")}
+                {props.phone ? t("change") : t("addPhone")}
               </Button>
             ) : null}
           </dd>
@@ -148,10 +172,10 @@ export function ContactActions(props: ContactActionsProps) {
         <div className={row}>
           <dt className="text-sm font-semibold text-ink">{t("email")}</dt>
           <dd className="flex items-center gap-2 text-sm text-body">
-            {props.email ?? t("notAdded")}
-            {!props.email && editing.kind === "none" ? (
+            {props.email ? maskEmail(props.email) : t("notAdded")}
+            {editing.kind === "none" ? (
               <Button size="sm" variant="outline" onClick={() => begin("email")}>
-                {t("addEmail")}
+                {props.email ? t("change") : t("addEmail")}
               </Button>
             ) : null}
           </dd>

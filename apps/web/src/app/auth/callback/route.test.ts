@@ -123,3 +123,36 @@ describe("/auth/callback: connect Google from Profile (flow=link)", () => {
     );
   });
 });
+
+describe("/auth/callback: recent sign-in proof and record ids (signed-in-home item 46)", () => {
+  const token = `h.${Buffer.from(JSON.stringify({ session_id: "sess-g" })).toString("base64url")}.s`;
+
+  it("issues the recent sign-in proof after a real Google sign-in", async () => {
+    exchangeCodeForSession.mockResolvedValue({
+      data: { session: { access_token: token } },
+      error: null,
+    });
+    await call("code=abc&next=%2F");
+    expect(cookieSet).toHaveBeenCalledWith(
+      "acx_recent",
+      expect.stringMatching(/^sess-g\.\d+\.[0-9a-f]{64}$/),
+      expect.objectContaining({ httpOnly: true }),
+    );
+  });
+
+  it("does not issue it when Google is only being connected (link mode)", async () => {
+    exchangeCodeForSession.mockResolvedValue({
+      data: { session: { access_token: token } },
+      error: null,
+    });
+    await call("code=abc&flow=link&next=%2Faccount");
+    expect(cookieSet).not.toHaveBeenCalledWith("acx_recent", expect.anything(), expect.anything());
+  });
+
+  it("never returns a record id in next", async () => {
+    const response = await call(
+      "code=abc&next=%2Fappointments%2F3f1c2d4e-5a6b-4c7d-8e9f-0a1b2c3d4e5f",
+    );
+    expect(location(response)).toBe("http://localhost:3200/appointments");
+  });
+});

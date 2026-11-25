@@ -21,10 +21,18 @@ export const PROFILE_ERRORS = [
   "cancelled",
 ] as const;
 
-export const AUTH_ERROR = [...SIGN_IN_ERRORS, ...PROFILE_ERRORS] as const;
+/** Recent sign-in and re-verify (docs/specs/signed-in-home.md item 81). */
+export const ACCOUNT_SECURITY_ERRORS = ["reauth_required", "mismatch", "invalid_code"] as const;
+
+export const AUTH_ERROR = [
+  ...SIGN_IN_ERRORS,
+  ...PROFILE_ERRORS,
+  ...ACCOUNT_SECURITY_ERRORS,
+] as const;
 
 export type SignInErrorKey = (typeof SIGN_IN_ERRORS)[number];
 export type ProfileErrorKey = (typeof PROFILE_ERRORS)[number];
+export type AccountSecurityErrorKey = (typeof ACCOUNT_SECURITY_ERRORS)[number];
 export type AuthErrorKey = (typeof AUTH_ERROR)[number];
 
 /** Where the error happened. Only "profile" may reveal that a contact is in use (accepted v1). */

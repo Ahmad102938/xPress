@@ -6,7 +6,8 @@ vi.mock("next/navigation", async (importOriginal) => ({
   ...(await importOriginal<typeof import("next/navigation")>()),
   useRouter: () => ({ replace: vi.fn(), refresh: vi.fn(), push: vi.fn(), prefetch: vi.fn() }),
 }));
-vi.mock("../actions", () => ({ signOut: vi.fn() }));
+vi.mock("../actions", () => ({ signOut: vi.fn(), signOutAction: vi.fn() }));
+vi.mock("@/features/profiles/actions", () => ({ selectProfile: vi.fn() }));
 const { Link } = await import("@/i18n/navigation");
 const { AuthProvider, useAuth } = await import("./auth-provider");
 const { HeaderAuth } = await import("./header-auth");
@@ -18,7 +19,17 @@ function mockSession(state: string, extra: Record<string, unknown> = {}) {
     vi.fn(
       async () =>
         new Response(
-          JSON.stringify({ state, name: null, avatarUrl: null, initials: "", ...extra }),
+          JSON.stringify({
+            state,
+            name: null,
+            initials: "",
+            maskedContact: null,
+            userTag: null,
+            profiles: [],
+            selectedProfileId: null,
+            addressChip: null,
+            ...extra,
+          }),
         ),
     ),
   );
@@ -106,6 +117,6 @@ describe("HeaderAuth on phones", () => {
     mockSession("signed_in", { name: "Asha Devi", initials: "AD" });
     await renderHeader();
     const menu = screen.getByRole("button", { name: "Account menu for Asha Devi" });
-    expect(menu.closest("div.hidden")).toHaveClass("md:block");
+    expect(menu.closest("div.hidden")).toHaveClass("md:flex");
   });
 });

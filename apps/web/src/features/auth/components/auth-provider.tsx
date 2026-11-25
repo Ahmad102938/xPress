@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import {
   AUTH_ERROR,
-  sanitizeNextPath,
+  safeReturnPath,
   type AuthErrorKey,
   type AuthMethodId,
 } from "@acurexpress/core";
@@ -26,15 +26,31 @@ import { routing } from "@/i18n/routing";
  * removes those parameters when the panel closes.
  */
 
-export type GateState = "signed_out" | "needs_finish" | "step_up" | "signed_in";
+export type GateState = "signed_out" | "needs_finish" | "step_up" | "signed_in" | "unavailable";
 export type PanelStart = "start" | "finish" | "step_up";
 
+/** Mirrors app/auth/session/route.ts. Masked contact only; initials, no photo URL. */
 export interface SessionView {
   state: GateState;
   name: string | null;
-  avatarUrl: string | null;
   initials: string;
+  maskedContact: string | null;
+  userTag: string | null;
+  profiles: Array<{ id: string; firstName: string; relationship: string }>;
+  selectedProfileId: string | null;
+  addressChip: { label: string; pin: string } | null;
 }
+
+export const SIGNED_OUT_VIEW: SessionView = {
+  state: "signed_out",
+  name: null,
+  initials: "",
+  maskedContact: null,
+  userTag: null,
+  profiles: [],
+  selectedProfileId: null,
+  addressChip: null,
+};
 
 export interface OpenOptions {
   next?: string;
@@ -68,7 +84,7 @@ async function fetchSession(): Promise<SessionView> {
     });
     return (await response.json()) as SessionView;
   } catch {
-    return { state: "signed_out", name: null, avatarUrl: null, initials: "" };
+    return SIGNED_OUT_VIEW;
   }
 }
 
@@ -111,7 +127,7 @@ export function AuthProvider({
 
   const openPanel = useCallback(
     (options: OpenOptions = {}) => {
-      setNext(sanitizeNextPath(options.next ?? currentPath(), routing.locales));
+      setNext(safeReturnPath(options.next ?? currentPath(), routing.locales));
       setStart(startFor(session?.state, options.step ?? "start"));
       setIsOpen(true);
       // The mobile back button closes the panel instead of leaving the page.
@@ -167,7 +183,7 @@ export function AuthProvider({
       setInitialError(
         error && (AUTH_ERROR as readonly string[]).includes(error) ? (error as AuthErrorKey) : null,
       );
-      setNext(sanitizeNextPath(params.get("next") ?? "/", routing.locales));
+      setNext(safeReturnPath(params.get("next") ?? "/", routing.locales));
       setStart(startFor(view?.state, stepFrom(params.get("step"))));
       setIsOpen(true);
     });
@@ -216,6 +232,11 @@ export function AuthProvider({
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+/** For components that may render outside the provider (for example in unit tests). */
+export function useOptionalAuth(): AuthContextValue | null {
+  return useContext(AuthContext);
 }
 
 export function useAuth(): AuthContextValue {

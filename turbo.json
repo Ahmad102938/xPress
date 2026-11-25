@@ -18,7 +18,9 @@
         "AUTH_METHODS",
         "RATE_LIMIT_HMAC_SECRET",
         "CRON_SECRET",
-        "NEXT_DIST_DIR"
+        "NEXT_DIST_DIR",
+        "SESSION_IDLE_MINUTES",
+        "PATIENT_HOME_FIXTURES"
       ]
     },
     "start": {
@@ -35,7 +37,9 @@
         "AUTH_METHODS",
         "RATE_LIMIT_HMAC_SECRET",
         "CRON_SECRET",
-        "NEXT_DIST_DIR"
+        "NEXT_DIST_DIR",
+        "SESSION_IDLE_MINUTES",
+        "PATIENT_HOME_FIXTURES"
       ]
     },
     "dev": {
@@ -51,7 +55,9 @@
         "AUTH_METHODS",
         "RATE_LIMIT_HMAC_SECRET",
         "CRON_SECRET",
-        "NEXT_DIST_DIR"
+        "NEXT_DIST_DIR",
+        "SESSION_IDLE_MINUTES",
+        "PATIENT_HOME_FIXTURES"
       ]
     },
     "lint": {
@@ -63,7 +69,7 @@
     },
     "test": {
       "dependsOn": ["^test"],
-      "env": ["FLAG_*"]
+      "env": ["FLAG_*", "SESSION_IDLE_MINUTES", "PATIENT_HOME_FIXTURES"]
     },
     "test:e2e": {
       "cache": false,
@@ -78,7 +84,9 @@
         "AUTH_METHODS",
         "RATE_LIMIT_HMAC_SECRET",
         "CRON_SECRET",
-        "NEXT_DIST_DIR"
+        "NEXT_DIST_DIR",
+        "SESSION_IDLE_MINUTES",
+        "PATIENT_HOME_FIXTURES"
       ],
       "passThroughEnv": ["CI", "PLAYWRIGHT_*", "HOME"]
     },
@@ -93,7 +101,9 @@
         "RATE_LIMIT_HMAC_SECRET",
         "CRON_SECRET",
         "NEXT_DIST_DIR",
-        "MAILPIT_URL"
+        "MAILPIT_URL",
+        "SESSION_IDLE_MINUTES",
+        "PATIENT_HOME_FIXTURES"
       ],
       "passThroughEnv": ["CI", "PLAYWRIGHT_*", "HOME"]
     }

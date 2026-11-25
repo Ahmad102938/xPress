@@ -15,7 +15,7 @@ function setup(props: Partial<React.ComponentProps<typeof OtpStep>> = {}) {
   const onResend = vi.fn();
   renderWithIntl(
     <OtpStep
-      maskedDestination="+91 98XXXXXX10"
+      maskedDestination="+91 •••••• 3210"
       onVerify={onVerify}
       onResend={onResend}
       pending={false}
@@ -29,7 +29,7 @@ function setup(props: Partial<React.ComponentProps<typeof OtpStep>> = {}) {
 describe("OtpStep", () => {
   it("shows the masked destination and a one-time-code field", () => {
     const { input } = setup();
-    expect(screen.getByText(/We sent a 6-digit code to \+91 98XXXXXX10/)).toBeInTheDocument();
+    expect(screen.getByText(/We sent a 6-digit code to \+91 •••••• 3210/)).toBeInTheDocument();
     expect(input).toHaveAttribute("autocomplete", "one-time-code");
   });
 

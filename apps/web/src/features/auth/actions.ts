@@ -7,7 +7,7 @@ import {
   isSilentSendSuccess,
   mapSupabaseAuthError,
   otpCodeSchema,
-  sanitizeNextPath,
+  safeReturnPath,
   sendEmailOtpInput,
   sendPhoneOtpInput,
   verifyOtpInput,
@@ -16,16 +16,29 @@ import {
   type SignInErrorKey,
 } from "@acurexpress/core";
 import { hasSupabaseEnv, type User } from "@acurexpress/db";
-import { completeStepUpServer, rateLimitHit, rateLimitReset } from "@acurexpress/db/admin";
+import { completeStepUpServer } from "@acurexpress/db/admin";
 import { createClient, createOtpSenderClient } from "@acurexpress/db/server";
+import { revokeSessionByToken } from "@acurexpress/db/session";
 import { isMethodEnabled } from "@/config/auth-methods";
 import { redirect } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { siteUrl } from "@/lib/site-url";
 import { logAuthEvent, type AuthEvent } from "@/lib/log";
+import {
+  DISMISS_PROFILE_CARD_COOKIE,
+  PROFILE_COOKIE,
+} from "@/features/profiles/server/profile-cookie";
 import { authState, type GateState } from "./server/auth-state";
+import { limiter, within } from "./server/limiter";
 import { METHOD_COOKIE, methodCookie } from "./server/method-cookie";
-import { allow, clientIp, limiterKey, type Limiter, type LimitName } from "./server/rate-limit";
+import { profileGuard } from "./server/profile-guard";
+import { clientIp, limiterKey } from "./server/rate-limit";
+import {
+  RECENT_COOKIE,
+  markRecentAuth,
+  requireRecentAuth,
+  sessionIdFromToken,
+} from "./server/recent-auth";
 
 /**
  * Sign-in server actions (docs/specs/auth.md Part B, Review Logs). Every action re-checks
@@ -37,8 +50,6 @@ export type ActionError = AuthErrorKey | "invalid_input";
 export type SendResult = { ok: true } | { ok: false; error: ActionError; issue?: string };
 export type StateResult =
   { ok: true; state: GateState } | { ok: false; error: ActionError; issue?: string };
-
-const limiter: Limiter = { hit: rateLimitHit, reset: rateLimitReset };
 
 async function locale(): Promise<Locale> {
   try {
@@ -65,29 +76,6 @@ function guard(method: AuthMethodId): SignInErrorKey | null {
   if (!isMethodEnabled(method)) return "method_disabled";
   if (!hasSupabaseEnv()) return "unavailable";
   return null;
-}
-
-/** Counts the given limits; a limiter failure fails closed as "unavailable". */
-async function within(
-  checks: ReadonlyArray<{ limit: LimitName; key: string }>,
-): Promise<boolean | "error"> {
-  try {
-    return await allow(limiter, checks);
-  } catch {
-    return "error";
-  }
-}
-
-function sessionIdFrom(accessToken: string): string | null {
-  try {
-    const payload: unknown = JSON.parse(
-      Buffer.from(accessToken.split(".")[1] ?? "", "base64url").toString(),
-    );
-    const id = (payload as { session_id?: unknown }).session_id;
-    return typeof id === "string" ? id : null;
-  } catch {
-    return null;
-  }
 }
 
 /** Remembers which method this sign-in used, for the consent source (validated by the database). */
@@ -185,11 +173,13 @@ async function verifyCode(
   }
 
   await rememberMethod(method);
+  // A real sign-in: the server issues its recent sign-in proof for this new session.
+  await markRecentAuth(supabase, sessionIdFromToken(data.session.access_token));
 
   // An email code proves the account's email: the server confirms step-up for this new session
   // (owner decision on OQ7). It does nothing when no step-up is needed.
   if (method === "email") {
-    const sessionId = sessionIdFrom(data.session.access_token);
+    const sessionId = sessionIdFromToken(data.session.access_token);
     if (sessionId) {
       try {
         await completeStepUpServer(data.user.id, sessionId);
@@ -302,16 +292,39 @@ export async function verifyStepUpEmail(input: { code: string }): Promise<StateR
   return verifyCode("email", email, code.data);
 }
 
-/** Ends the session on this device only (N4) and goes to Home or Contact us. POST by nature. */
-export async function signOut(destination: "/" | "/contact" = "/"): Promise<never> {
-  const target = destination === "/contact" ? "/contact" : "/";
+/** Cookies that belong to a signed-in session and must not outlive it. */
+async function clearSessionCookies() {
+  const jar = await cookies();
+  for (const name of [METHOD_COOKIE, RECENT_COOKIE, PROFILE_COOKIE, DISMISS_PROFILE_CARD_COOKIE])
+    jar.delete(name);
+}
+
+async function endLocalSession(): Promise<boolean> {
+  let ok = true;
   if (hasSupabaseEnv()) {
     const supabase = await createClient();
-    await supabase.auth.signOut({ scope: "local" });
+    const { error } = await supabase.auth.signOut({ scope: "local" });
+    ok = !error;
   }
-  (await cookies()).delete(METHOD_COOKIE);
-  logAuthEvent("auth.sign_out", { outcome: "ok", locale: await locale() });
+  await clearSessionCookies();
+  logAuthEvent("auth.sign_out", { outcome: ok ? "ok" : "failed", locale: await locale() });
+  return ok;
+}
+
+/**
+ * Ends the session on this device only (N4) and goes to Home or Contact us. POST by nature.
+ * Kept for forms without JavaScript; with JavaScript, useSignOut() calls signOutAction() instead so
+ * it can clear client state and load a fresh document (docs/specs/signed-in-home.md item 31).
+ */
+export async function signOut(destination: "/" | "/contact" = "/"): Promise<never> {
+  const target = destination === "/contact" ? "/contact" : "/";
+  await endLocalSession();
   return redirect({ href: target, locale: await locale() });
+}
+
+/** Same as signOut, but returns a result; the caller clears client state and navigates. */
+export async function signOutAction(): Promise<{ ok: boolean }> {
+  return { ok: await endLocalSession() };
 }
 
 /** What the step-up screen may offer this account (masked email, Google), for the signed-in user. */
@@ -332,7 +345,7 @@ export type RedirectResult = { ok: true; url: string } | { ok: false; error: Act
 export async function startGoogle(input: { next?: string }): Promise<RedirectResult> {
   const blocked = guard("google");
   if (blocked) return fail("auth.oauth_callback", "google", blocked);
-  const next = sanitizeNextPath(input.next, routing.locales);
+  const next = safeReturnPath(input.next, routing.locales);
   const callback = new URL("/auth/callback", siteUrl());
   callback.searchParams.set("next", next);
 
@@ -355,18 +368,6 @@ export async function startGoogle(input: { next?: string }): Promise<RedirectRes
 export type ProfileResult = { ok: true } | { ok: false; error: ActionError; issue?: string };
 export type LinkResult = { ok: true; url: string } | { ok: false; error: ActionError };
 
-/** Profile actions need a fully signed-in patient and the per-user and per-IP daily limits. */
-async function profileGuard(): Promise<
-  | { ok: true; supabase: Awaited<ReturnType<typeof createClient>>; userId: string }
-  | { ok: false; error: ActionError }
-> {
-  if (!hasSupabaseEnv()) return { ok: false, error: "unavailable" };
-  const supabase = await createClient();
-  const auth = await authState(supabase);
-  if (auth.state !== "signed_in" || !auth.user) return { ok: false, error: "unavailable" };
-  return { ok: true, supabase, userId: auth.user.id };
-}
-
 async function profileLimits(userId: string): Promise<ActionError | null> {
   const ip = clientIp(await headers());
   const allowed = await within([
@@ -384,6 +385,8 @@ export async function addPhone(input: { phone: string }): Promise<ProfileResult>
     return fail("auth.contact_change", "phone", "invalid_input", parsed.error.issues[0]?.message);
   const ctx = await profileGuard();
   if (!ctx.ok) return fail("auth.contact_change", "phone", ctx.error);
+  if (!(await requireRecentAuth(ctx.supabase)).ok)
+    return fail("auth.contact_change", "phone", "reauth_required");
   const limited = await profileLimits(ctx.userId);
   if (limited) return fail("auth.contact_change", "phone", limited);
 
@@ -412,6 +415,8 @@ export async function verifyAddPhone(input: {
     return fail("auth.contact_change", "phone", "invalid_input", parsed.error.issues[0]?.message);
   const ctx = await profileGuard();
   if (!ctx.ok) return fail("auth.contact_change", "phone", ctx.error);
+  if (!(await requireRecentAuth(ctx.supabase)).ok)
+    return fail("auth.contact_change", "phone", "reauth_required");
   const allowed = await within([
     { limit: "verifyPerDestination", key: limiterKey("verify", parsed.data.destination) },
   ]);
@@ -435,6 +440,8 @@ export async function addEmail(input: { email: string }): Promise<ProfileResult>
     return fail("auth.contact_change", "email", "invalid_input", parsed.error.issues[0]?.message);
   const ctx = await profileGuard();
   if (!ctx.ok) return fail("auth.contact_change", "email", ctx.error);
+  if (!(await requireRecentAuth(ctx.supabase)).ok)
+    return fail("auth.contact_change", "email", "reauth_required");
   const limited = await profileLimits(ctx.userId);
   if (limited) return fail("auth.contact_change", "email", limited);
 
@@ -462,6 +469,8 @@ export async function verifyAddEmail(input: {
     return fail("auth.contact_change", "email", "invalid_input", parsed.error.issues[0]?.message);
   const ctx = await profileGuard();
   if (!ctx.ok) return fail("auth.contact_change", "email", ctx.error);
+  if (!(await requireRecentAuth(ctx.supabase)).ok)
+    return fail("auth.contact_change", "email", "reauth_required");
   const allowed = await within([
     { limit: "verifyPerDestination", key: limiterKey("verify", parsed.data.destination) },
   ]);
@@ -483,6 +492,9 @@ export async function connectGoogle(): Promise<LinkResult> {
   if (!isMethodEnabled("google")) return fail("auth.link_identity", "google", "method_disabled");
   const ctx = await profileGuard();
   if (!ctx.ok) return fail("auth.link_identity", "google", ctx.error);
+  // Adding a sign-in method needs a recent sign-in, like adding a phone or email.
+  if (!(await requireRecentAuth(ctx.supabase)).ok)
+    return fail("auth.link_identity", "google", "reauth_required");
   const current = await locale();
   const callback = new URL("/auth/callback", siteUrl());
   callback.searchParams.set("flow", "link");
@@ -512,5 +524,153 @@ export async function setMarketing(input: { granted: boolean }): Promise<Profile
   if (!ctx.ok) return ctx;
   const { error } = await ctx.supabase.rpc("record_consent", { p_granted: input.granted });
   if (error) return { ok: false, error: "unavailable" };
+  return { ok: true };
+}
+
+// ---- Recent sign-in, re-verify, sign out everywhere, deletion request (signed-in-home Part C) --
+
+export type ReverifyChannel = "phone" | "email";
+export type ReverifyOptions =
+  | { ok: true; channels: Array<{ channel: ReverifyChannel; masked: string }> }
+  | { ok: false; error: ActionError };
+
+/** The account's own confirmed contacts, phone first. Never taken from the browser. */
+function ownContacts(user: User): Array<{ channel: ReverifyChannel; destination: string }> {
+  const contacts: Array<{ channel: ReverifyChannel; destination: string }> = [];
+  if (user.phone && user.phone_confirmed_at)
+    contacts.push({ channel: "phone", destination: `+${user.phone.replace(/^\+/, "")}` });
+  if (user.email && user.email_confirmed_at)
+    contacts.push({ channel: "email", destination: user.email });
+  return contacts;
+}
+
+/** Which ways this account can confirm it is them (masked). Google re-verify is not offered (Step 0). */
+export async function reverifyOptions(): Promise<ReverifyOptions> {
+  const ctx = await profileGuard();
+  if (!ctx.ok) return { ok: false, error: ctx.error };
+  const { maskPhone, maskEmail } = await import("@acurexpress/core");
+  return {
+    ok: true,
+    channels: ownContacts(ctx.user)
+      .filter(({ channel }) => isMethodEnabled(channel))
+      .map(({ channel, destination }) => ({
+        channel,
+        masked: channel === "phone" ? maskPhone(destination) : maskEmail(destination),
+      })),
+  };
+}
+
+function pickContact(user: User, channel: ReverifyChannel | undefined) {
+  const contacts = ownContacts(user).filter((contact) => isMethodEnabled(contact.channel));
+  return (channel ? contacts.find((contact) => contact.channel === channel) : contacts[0]) ?? null;
+}
+
+/** Sends a re-verify code to the signed-in account's own phone (default) or email. */
+export async function sendReverifyCode(input: {
+  channel?: ReverifyChannel;
+  captchaToken?: string;
+}): Promise<SendResult> {
+  const ctx = await profileGuard();
+  if (!ctx.ok) return fail("auth.reverify", "none", ctx.error);
+  const contact = pickContact(ctx.user, input.channel);
+  if (!contact) return fail("auth.reverify", "none", "unavailable");
+  const allowed = await within([
+    { limit: "reverifyPerUser", key: limiterKey("reverify-user", ctx.userId) },
+  ]);
+  if (allowed === "error") return fail("auth.reverify", contact.channel, "unavailable");
+  if (!allowed) return fail("auth.reverify", contact.channel, "rate_limited");
+  return sendCode(contact.channel, contact.destination, input.captchaToken, false);
+}
+
+/**
+ * Checks the re-verify code. The new session must belong to the same user (else sign out and fail
+ * closed); the session it replaced is revoked; the recent sign-in proof is issued for the new one.
+ */
+export async function verifyReverifyCode(input: {
+  channel?: ReverifyChannel;
+  code: string;
+}): Promise<ProfileResult> {
+  const code = otpCodeSchema.safeParse(input.code);
+  if (!code.success)
+    return fail("auth.reverify", "none", "invalid_input", code.error.issues[0]?.message);
+  const ctx = await profileGuard();
+  if (!ctx.ok) return fail("auth.reverify", "none", ctx.error);
+  const contact = pickContact(ctx.user, input.channel);
+  if (!contact) return fail("auth.reverify", "none", "unavailable");
+  const allowed = await within([
+    { limit: "verifyPerDestination", key: limiterKey("verify", contact.destination) },
+  ]);
+  if (allowed === "error") return fail("auth.reverify", contact.channel, "unavailable");
+  if (!allowed) return fail("auth.reverify", contact.channel, "too_many_attempts");
+
+  // The replaced session's token, used only to revoke that session afterwards.
+  const { data: before } = await ctx.supabase.auth.getSession();
+  const oldToken = before.session?.access_token;
+
+  const { data, error } =
+    contact.channel === "phone"
+      ? await ctx.supabase.auth.verifyOtp({
+          phone: contact.destination,
+          token: code.data,
+          type: "sms",
+        })
+      : await ctx.supabase.auth.verifyOtp({
+          email: contact.destination,
+          token: code.data,
+          type: "email",
+        });
+  if (error || !data.session || !data.user) {
+    return fail(
+      "auth.reverify",
+      contact.channel,
+      error ? mapSupabaseAuthError(error, "verify") : "invalid_or_expired",
+    );
+  }
+  if (data.user.id !== ctx.userId) {
+    await ctx.supabase.auth.signOut({ scope: "local" });
+    await clearSessionCookies();
+    return fail("auth.reverify", contact.channel, "mismatch");
+  }
+  if (oldToken && oldToken !== data.session.access_token) await revokeSessionByToken(oldToken);
+  await markRecentAuth(ctx.supabase, sessionIdFromToken(data.session.access_token));
+  logAuthEvent("auth.reverify", { method: contact.channel, outcome: "ok", locale: await locale() });
+  return { ok: true };
+}
+
+/** Audits, then signs out every session of this account. The caller clears client state. */
+export async function signOutEverywhere(): Promise<ProfileResult> {
+  const ctx = await profileGuard();
+  if (!ctx.ok) return fail("auth.sign_out_all", "none", ctx.error);
+  if (!(await requireRecentAuth(ctx.supabase)).ok)
+    return fail("auth.sign_out_all", "none", "reauth_required");
+  const { error: auditError } = await ctx.supabase.rpc("record_sign_out_everywhere");
+  if (auditError) return fail("auth.sign_out_all", "none", "unavailable");
+  const { error } = await ctx.supabase.auth.signOut({ scope: "global" });
+  await clearSessionCookies();
+  if (error) return fail("auth.sign_out_all", "none", "unavailable");
+  logAuthEvent("auth.sign_out_all", { outcome: "ok", locale: await locale() });
+  return { ok: true };
+}
+
+/** Records a deletion request (nothing is deleted), then signs out everywhere. */
+export async function requestAccountDeletion(): Promise<ProfileResult> {
+  const ctx = await profileGuard();
+  if (!ctx.ok) return fail("account.deletion_request", "none", ctx.error);
+  if (!(await requireRecentAuth(ctx.supabase)).ok) {
+    return fail("account.deletion_request", "none", "reauth_required");
+  }
+  const { error } = await ctx.supabase.rpc("request_account_deletion");
+  if (error) return fail("account.deletion_request", "none", "unavailable");
+  logAuthEvent("account.deletion_request", { outcome: "ok", locale: await locale() });
+  return signOutEverywhere();
+}
+
+/** Withdraws an open deletion request. Signed in is enough; no open request is not an error. */
+export async function cancelAccountDeletion(): Promise<ProfileResult> {
+  const ctx = await profileGuard();
+  if (!ctx.ok) return fail("account.deletion_request", "none", ctx.error);
+  const { error } = await ctx.supabase.rpc("cancel_account_deletion");
+  if (error) return fail("account.deletion_request", "none", "unavailable");
+  logAuthEvent("account.deletion_request", { outcome: "cancelled", locale: await locale() });
   return { ok: true };
 }

@@ -46,5 +46,5 @@ test("a returning patient skips Finish sign-up; logout ends the session", async 
   await dialog.getByLabel("Email address").fill(email);
   await dialog.getByRole("button", { name: "Continue", exact: true }).click();
   await dialog.getByLabel("6-digit code").fill(await emailCode(email));
-  await expect(page.getByRole("button", { name: "Account menu for Ravi Test" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Account menu for Ravi" })).toBeVisible();
 });

@@ -10,9 +10,12 @@ import { createClient } from "@acurexpress/db/server";
  *   3. this session pending or stale (90d)  -> step_up
  *   4. otherwise                            -> signed_in
  * touch_last_seen() runs first so a stale session is recorded as pending before anything else.
+ * If the gate itself cannot be read (database error), the state is `unavailable`, never
+ * `needs_finish`: a database incident must not send every patient to Finish sign-up
+ * (docs/specs/signed-in-home.md item 35).
  */
 
-export type GateState = "signed_out" | "needs_finish" | "step_up" | "signed_in";
+export type GateState = "signed_out" | "needs_finish" | "step_up" | "signed_in" | "unavailable";
 
 export interface GateInput {
   hasUser: boolean;
@@ -68,8 +71,13 @@ export async function authState(client?: ServerClient): Promise<AuthState> {
   const user = error ? null : data.user;
   if (!user) return SIGNED_OUT;
 
-  await supabase.rpc("touch_last_seen");
-  const { data: raw } = await supabase.rpc("my_auth_state");
+  const touched = await supabase.rpc("touch_last_seen");
+  const { data: raw, error: gateError } = await supabase.rpc("my_auth_state");
+  if (touched.error || gateError) {
+    // Error code only, never ids or names.
+    console.error(`[auth] gate unavailable (${(gateError ?? touched.error)?.code ?? "unknown"})`);
+    return { ...SIGNED_OUT, state: "unavailable", user };
+  }
   const gate = (raw ?? {}) as MyAuthState;
 
   const providers = new Set((user.identities ?? []).map((identity) => identity.provider));

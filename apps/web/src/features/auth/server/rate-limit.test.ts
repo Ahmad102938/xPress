@@ -75,3 +75,27 @@ describe("allow", () => {
     expect(LIMITS.profileAddPerIp).toEqual({ windowSeconds: 86_400, max: 20 });
   });
 });
+
+describe("signed-in-home limits", () => {
+  it("give every new limit its own key kind, so no counter is shared", () => {
+    const kinds = [
+      "ip",
+      "dest",
+      "resend",
+      "verify",
+      "user",
+      "profile-ip",
+      "reverify-user",
+      "csp-ip",
+      "profile-write-user",
+    ] as const;
+    const keys = kinds.map((kind) => limiterKey(kind, "same-value", env));
+    expect(new Set(keys).size).toBe(kinds.length);
+  });
+
+  it("define the re-verify, CSP report and profile write windows", () => {
+    expect(LIMITS.reverifyPerUser).toEqual({ windowSeconds: 3600, max: 5 });
+    expect(LIMITS.cspReportPerIp).toEqual({ windowSeconds: 3600, max: 60 });
+    expect(LIMITS.profileWritePerUser).toEqual({ windowSeconds: 3600, max: 60 });
+  });
+});

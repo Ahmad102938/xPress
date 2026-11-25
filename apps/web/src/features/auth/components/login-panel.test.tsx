@@ -93,7 +93,7 @@ describe("LoginPanel: phone flow to Finish sign-up", () => {
 
     fireEvent.change(screen.getByLabelText("Mobile number"), { target: { value: "9876543210" } });
     fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-    expect(await screen.findByText(/\+91 98XXXXXX10/, undefined, slow)).toBeInTheDocument();
+    expect(await screen.findByText(/\+91 •••••• 3210/, undefined, slow)).toBeInTheDocument();
     expect(actions.sendPhoneOtp).toHaveBeenCalledWith({ phone: "+919876543210" });
 
     fireEvent.change(screen.getByLabelText("6-digit code"), { target: { value: "123456" } });

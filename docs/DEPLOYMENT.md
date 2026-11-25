@@ -46,6 +46,8 @@ Set per project and per Vercel environment. The variable names are listed in the
 
 - Feature flags (`FLAG_*`) are set per environment. All regulated flags stay `false` in production until HCQ Care clears the launch gate. Changing a flag needs a redeploy (public pages are prerendered).
 - `SUPABASE_SERVICE_ROLE_KEY` is never `NEXT_PUBLIC_` and never set on a project that does not need it.
+- Signed-in experience (docs/specs/signed-in-home.md): `SESSION_IDLE_MINUTES` (optional, default 30). **`PATIENT_HOME_FIXTURES` is never set on Vercel** (a Vercel production build fails if it is, and production builds ignore it).
+- The signed-in-home migrations (`*_patient_profile_enums`, `*_patient_profiles`, `*_account_security`) are additive and include a backfill of self patient profiles: migrate first, then deploy, as below. Before CI applies them to any remote, the project lead confirms which remotes already hold the existing two migrations (this checkout is linked to a remote project) and takes a PITR marker.
 - Turbo only passes env vars declared in `turbo.json` (`FLAG_*`, `NEXT_PUBLIC_*`, `SUPABASE_*`). Add new variable names there, or the build will not see them.
 
 ## 4. Domains and DNS

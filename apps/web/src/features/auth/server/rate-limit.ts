@@ -12,14 +12,27 @@ export const LIMITS = {
   verifyPerDestination: { windowSeconds: 600, max: 5 },
   profileAddPerUser: { windowSeconds: 86_400, max: 5 },
   profileAddPerIp: { windowSeconds: 86_400, max: 20 },
+  // docs/specs/signed-in-home.md item 37: each has its own key kind, so no counter is shared.
+  reverifyPerUser: { windowSeconds: 3600, max: 5 },
+  cspReportPerIp: { windowSeconds: 3600, max: 60 },
+  profileWritePerUser: { windowSeconds: 3600, max: 60 },
 } as const;
 
 export type LimitName = keyof typeof LIMITS;
-export type KeyKind = "ip" | "dest" | "resend" | "verify" | "user" | "profile-ip";
+export type KeyKind =
+  | "ip"
+  | "dest"
+  | "resend"
+  | "verify"
+  | "user"
+  | "profile-ip"
+  | "reverify-user"
+  | "csp-ip"
+  | "profile-write-user";
 
 type Env = Record<string, string | undefined>;
 
-function hmacSecret(env: Env): string {
+export function hmacSecret(env: Env = process.env): string {
   const secret = env.RATE_LIMIT_HMAC_SECRET;
   if (secret) return secret;
   if (env.VERCEL === "1") throw new Error("RATE_LIMIT_HMAC_SECRET is missing.");

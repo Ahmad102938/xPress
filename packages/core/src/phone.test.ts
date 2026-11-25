@@ -31,11 +31,15 @@ describe("normalizeIndianPhone", () => {
 });
 
 describe("maskPhone", () => {
-  it("keeps the first two and last two digits", () => {
-    expect(maskPhone("+919876543210")).toBe("+91 98XXXXXX10");
+  it("shows only the country code and the last four digits", () => {
+    expect(maskPhone("+919876543210")).toBe("+91 •••••• 3210");
+  });
+
+  it("shows only the last four digits of a non-Indian number", () => {
+    expect(maskPhone("+4915112345678")).toBe("•••••• 5678");
   });
 
   it("fully masks anything that is not a normalised number", () => {
-    expect(maskPhone("9876543210")).toBe("+91 XXXXXXXXXX");
+    expect(maskPhone("9876543210")).toBe("••••••••••");
   });
 });

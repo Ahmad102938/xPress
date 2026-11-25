@@ -41,6 +41,8 @@ export function AuthLinkInterceptor() {
 
       const path = stripLocale(url.pathname);
       const state = session?.state;
+      // Sign-in cannot be checked right now: let the link load /login, which says so.
+      if (state === "unavailable") return;
       const step: PanelStart =
         state === "needs_finish" ? "finish" : state === "step_up" ? "step_up" : "start";
 

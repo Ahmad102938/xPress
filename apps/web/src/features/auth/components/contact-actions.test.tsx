@@ -9,6 +9,12 @@ const actions = vi.hoisted(() => ({
   verifyAddEmail: vi.fn(),
   connectGoogle: vi.fn(),
   setMarketing: vi.fn(),
+  reverifyOptions: vi.fn(async () => ({
+    ok: true,
+    channels: [{ channel: "email", masked: "a•••@example.test" }],
+  })),
+  sendReverifyCode: vi.fn(async () => ({ ok: true })),
+  verifyReverifyCode: vi.fn(async () => ({ ok: true })),
 }));
 vi.mock("../actions", () => actions);
 const refresh = vi.fn();
@@ -36,12 +42,37 @@ beforeEach(() => {
 });
 
 describe("ContactActions", () => {
-  it("lists contacts and offers what is missing", () => {
+  it("lists contacts masked and offers to add what is missing or change what exists", () => {
     renderWithIntl(<ContactActions {...base} />);
-    expect(screen.getByText("a@example.test")).toBeInTheDocument();
+    expect(screen.getByText("•@example.test")).toBeInTheDocument();
+    expect(screen.queryByText("a@example.test")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add mobile number" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Add email" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Change" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Connect Google" })).toBeInTheDocument();
+  });
+
+  it("opens the re-verify dialog when the server asks for a recent sign-in, then retries", async () => {
+    actions.addPhone
+      .mockResolvedValueOnce({ ok: false, error: "reauth_required" })
+      .mockResolvedValueOnce({ ok: true });
+    renderWithIntl(<ContactActions {...base} />);
+    fireEvent.click(screen.getByRole("button", { name: "Add mobile number" }));
+    fireEvent.change(screen.getByLabelText("Mobile number"), { target: { value: "9000000002" } });
+    fireEvent.click(screen.getByRole("button", { name: "Send code" }));
+    expect(
+      await screen.findByRole("dialog", { name: "Confirm it's you to add a mobile number" }, slow),
+    ).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole("button", { name: "Send code" }, slow));
+    fireEvent.change(await screen.findByLabelText("6-digit code", undefined, slow), {
+      target: { value: "123456" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    await waitFor(() => expect(actions.addPhone).toHaveBeenCalledTimes(2), slow);
+    expect(actions.verifyReverifyCode).toHaveBeenCalledWith({ channel: "email", code: "123456" });
+    expect(
+      await screen.findByLabelText(/Enter the 6-digit code we sent to/, undefined, slow),
+    ).toBeInTheDocument();
   });
 
   it("adds a phone after the code (CUJ 6)", async () => {
@@ -52,7 +83,7 @@ describe("ContactActions", () => {
     fireEvent.change(screen.getByLabelText("Mobile number"), { target: { value: "9000000002" } });
     fireEvent.click(screen.getByRole("button", { name: "Send code" }));
     const code = await screen.findByLabelText(
-      /Enter the 6-digit code we sent to \+91 90XXXXXX02/,
+      /Enter the 6-digit code we sent to \+91 •••••• 0002/,
       undefined,
       slow,
     );

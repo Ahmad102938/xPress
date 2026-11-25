@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { createClient } from "@acurexpress/db/server";
-import { CalendarCheck, ChevronRight } from "lucide-react";
-import { Button } from "@acurexpress/ui";
 import { getAuthMethods } from "@/config/auth-methods";
-import { signOut } from "@/features/auth/actions";
 import { ContactActions } from "@/features/auth/components/contact-actions";
-import { requirePatient } from "@/features/auth/server/require-patient";
-import { Link } from "@/i18n/navigation";
+import { SecuritySection } from "@/features/auth/components/security-section";
+import { requirePatientContext } from "@/features/auth/server/require-patient";
+import { FamilyList } from "@/features/profiles/components/family-list";
 import type { Locale } from "@/i18n/routing";
+import { Panel, PrivatePage } from "../page-header";
 
 export async function generateMetadata({
   params,
@@ -27,73 +25,75 @@ const LINK_RESULTS = new Set([
   "method_disabled",
 ]);
 
-/** Profile placeholder: name, contacts, add phone/email, connect Google, marketing, logout. */
+/**
+ * The login's settings (docs/specs/signed-in-home.md item 42): sign-in methods, security, consent
+ * settings and family profiles. Payments and transactions are not rendered in this build (no
+ * tables). Person data lives on /profile. Reads use the user's own session (RLS).
+ */
 async function AccountContent({
   searchParams,
 }: {
   searchParams: PageProps<"/[locale]/account">["searchParams"];
 }) {
-  const auth = await requirePatient("/account");
+  const { auth, supabase, profiles } = await requirePatientContext("/account");
   const t = await getTranslations("account");
-  const supabase = await createClient();
+  const tFamily = await getTranslations("family");
 
-  // The user's own rows, read with their session so RLS applies (SUPABASE.md §8 rule 9).
-  const [{ data: profile }, { data: marketingRows }] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("full_name, email, phone")
-      .eq("id", auth.user.id)
-      .maybeSingle(),
-    supabase
-      .from("consents")
-      .select("granted")
-      .eq("consent_type", "marketing")
-      .order("created_at", { ascending: false })
-      .limit(1),
-  ]);
+  const [{ data: account }, { data: marketingRows }, { data: termsRows }, { data: deletion }] =
+    await Promise.all([
+      supabase.from("profiles").select("email, phone").eq("id", auth.user.id).maybeSingle(),
+      supabase
+        .from("consents")
+        .select("granted")
+        .eq("consent_type", "marketing")
+        .order("created_at", { ascending: false })
+        .limit(1),
+      supabase
+        .from("consents")
+        .select("document_version")
+        .eq("consent_type", "terms_privacy")
+        .order("created_at", { ascending: false })
+        .limit(1),
+      supabase
+        .from("account_deletion_requests")
+        .select("id")
+        .eq("status", "requested")
+        .maybeSingle(),
+    ]);
 
   const link = (await searchParams).link;
   const linkResult = typeof link === "string" && LINK_RESULTS.has(link) ? link : null;
   const providers = new Set((auth.user.identities ?? []).map((identity) => identity.provider));
+  const termsVersion = termsRows?.[0]?.document_version;
 
   return (
-    <div className="panel p-6">
-      {/* The header menu is hidden on phones, so its links live here too (bottom nav "Account"). */}
-      <Link
-        href="/appointments"
-        className="mb-4 flex min-h-12 items-center gap-3 rounded-lg border border-line px-4 font-semibold text-ink hover:bg-tint-blue"
-      >
-        <CalendarCheck aria-hidden="true" className="size-5 text-brand-blue" />
-        <span className="flex-1">{t("appointmentsLink")}</span>
-        <ChevronRight aria-hidden="true" className="size-4 text-muted" />
-      </Link>
-      <dl>
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line py-3">
-          <dt className="text-sm font-semibold text-ink">{t("name")}</dt>
-          <dd className="text-sm text-body">{profile?.full_name ?? auth.fullName}</dd>
-        </div>
-      </dl>
-      <div className="mt-6">
-        <ContactActions
-          phone={profile?.phone ?? null}
-          email={profile?.email ?? null}
-          googleConnected={providers.has("google")}
-          googleEnabled={getAuthMethods().includes("google")}
-          marketing={marketingRows?.[0]?.granted ?? false}
-          initialResult={linkResult}
-        />
+    <div className="grid gap-6 lg:grid-cols-12">
+      <div className="flex flex-col gap-6 lg:col-span-7">
+        <Panel id="methods">
+          <ContactActions
+            phone={account?.phone ?? null}
+            email={account?.email ?? null}
+            googleConnected={providers.has("google")}
+            googleEnabled={getAuthMethods().includes("google")}
+            marketing={marketingRows?.[0]?.granted ?? false}
+            initialResult={linkResult}
+          />
+          {termsVersion ? (
+            <p className="mt-4 text-sm text-muted">
+              {t("termsVersion", { version: termsVersion })}
+            </p>
+          ) : null}
+        </Panel>
+        <Panel id="security">
+          <SecuritySection deletionRequested={Boolean(deletion)} />
+        </Panel>
       </div>
-      <form
-        action={async () => {
-          "use server";
-          await signOut("/");
-        }}
-        className="mt-8"
-      >
-        <Button type="submit" variant="outline">
-          {t("logout")}
-        </Button>
-      </form>
+      <div className="lg:col-span-5">
+        <Panel id="family" title={tFamily("title")}>
+          <p className="mb-4 text-sm text-body">{tFamily("intro")}</p>
+          <FamilyList dependents={profiles.filter((profile) => !profile.isSelf)} />
+        </Panel>
+      </div>
     </div>
   );
 }
@@ -106,12 +106,10 @@ export default async function AccountPage({
   setRequestLocale(locale as Locale);
   const t = await getTranslations("account");
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-ink">{t("title")}</h1>
-      <p className="mt-1 mb-4 text-body">{t("intro")}</p>
-      <Suspense fallback={<div className="panel min-h-64" aria-busy="true" />}>
+    <PrivatePage title={t("title")} intro={t("intro")}>
+      <Suspense fallback={<div className="panel min-h-96 border border-line" aria-busy="true" />}>
         <AccountContent searchParams={searchParams} />
       </Suspense>
-    </div>
+    </PrivatePage>
   );
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sanitizeNextPath } from "./next-path";
+import { safeReturnPath, sanitizeNextPath } from "./next-path";
 
 const locales = ["en", "hi"] as const;
 const sanitize = (value: unknown) => sanitizeNextPath(value, locales);
@@ -56,5 +56,35 @@ describe("sanitizeNextPath: attack corpus falls back to /", () => {
   it("does not treat /logins or /authors as auth routes", () => {
     expect(sanitize("/logins")).toBe("/logins");
     expect(sanitize("/authors")).toBe("/authors");
+  });
+});
+
+describe("safeReturnPath: never carries a record id", () => {
+  const safe = (value: unknown) => safeReturnPath(value, locales);
+  const id = "3f1c2d4e-5a6b-4c7d-8e9f-0a1b2c3d4e5f";
+
+  it("cuts a path at its first UUID segment", () => {
+    expect(safe(`/appointments/${id}`)).toBe("/appointments");
+  });
+
+  it("keeps the Hindi prefix", () => {
+    expect(safe(`/hi/appointments/${id}/receipt`)).toBe("/hi/appointments");
+  });
+
+  it("matches upper-case and percent-encoded UUIDs", () => {
+    expect(safe(`/appointments/${id.toUpperCase()}`)).toBe("/appointments");
+    expect(safe(`/appointments/${encodeURIComponent(id)}?tab=past`)).toBe("/appointments");
+  });
+
+  it("leaves paths without a UUID unchanged", () => {
+    expect(safe("/appointments?tab=past")).toBe("/appointments?tab=past");
+  });
+
+  it("still refuses unsafe input", () => {
+    expect(safe("//evil.test")).toBe("/");
+  });
+
+  it("returns / when the UUID is the first segment", () => {
+    expect(safe(`/${id}`)).toBe("/");
   });
 });

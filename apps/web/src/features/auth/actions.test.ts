@@ -40,6 +40,11 @@ const signOutCall = vi.fn(async () => ({ error: null }));
 const signInWithOAuth = vi.fn();
 const updateUser = vi.fn();
 const linkIdentity = vi.fn();
+const getClaims = vi.fn(async () => ({ data: { claims: { session_id: "sess-0" } }, error: null }));
+const getSession = vi.fn(async () => ({
+  data: { session: { access_token: "old-access-token" } },
+  error: null,
+}));
 vi.mock("@acurexpress/db/server", () => ({
   createOtpSenderClient: () => ({ auth: { signInWithOtp } }),
   createClient: async () => ({
@@ -50,9 +55,16 @@ vi.mock("@acurexpress/db/server", () => ({
       signInWithOAuth,
       updateUser,
       linkIdentity,
+      getClaims,
+      getSession,
     },
     rpc,
   }),
+}));
+
+const revokeSessionByToken = vi.fn<(token: string) => Promise<"ok">>(async () => "ok");
+vi.mock("@acurexpress/db/session", () => ({
+  revokeSessionByToken: (token: string) => revokeSessionByToken(token),
 }));
 
 let enabled = ["phone", "email", "google"];
@@ -71,6 +83,12 @@ vi.mock("./server/auth-state", () => ({ authState: () => authState() }));
 vi.spyOn(console, "info").mockImplementation(() => {});
 
 const actions = await import("./actions");
+const { recentToken } = await import("./server/recent-auth");
+
+/** A recent sign-in proof for the mocked session "sess-0", valid for 15 minutes. */
+function markRecent() {
+  cookieJar.set("acx_recent", recentToken("sess-0", Math.floor(Date.now() / 1000) + 900));
+}
 
 function jwt(payload: Record<string, unknown>) {
   return `h.${Buffer.from(JSON.stringify(payload)).toString("base64url")}.s`;
@@ -382,6 +400,8 @@ describe("Profile actions (Milestone 6, T4, T6, T8, T9)", () => {
   beforeEach(() => {
     authState.mockResolvedValue({ state: "signed_in", user: { id: "user-1" } } as never);
     updateUser.mockResolvedValue({ data: {}, error: null });
+    // These cases model a patient who signed in recently (signed-in-home Part C).
+    markRecent();
   });
 
   it("adds a free phone and asks for the code", async () => {
@@ -475,5 +495,153 @@ describe("Profile actions (Milestone 6, T4, T6, T8, T9)", () => {
     rpc.mockResolvedValue({ data: null, error: null });
     await expect(actions.setMarketing({ granted: true })).resolves.toEqual({ ok: true });
     expect(rpc).toHaveBeenCalledWith("record_consent", { p_granted: true });
+  });
+});
+
+describe("Recent sign-in (signed-in-home Part C)", () => {
+  const user = {
+    id: "user-1",
+    phone: "919000000001",
+    phone_confirmed_at: "2026-11-24T00:00:00Z",
+    email: "a.patient@example.test",
+    email_confirmed_at: "2026-11-24T00:00:00Z",
+  };
+
+  beforeEach(() => {
+    authState.mockResolvedValue({ state: "signed_in", user } as never);
+    updateUser.mockResolvedValue({ data: {}, error: null });
+    rpc.mockResolvedValue({ data: null, error: null });
+    revokeSessionByToken.mockClear();
+  });
+
+  it.each([
+    ["addPhone", () => actions.addPhone({ phone: "9000000002" })],
+    ["addEmail", () => actions.addEmail({ email: "new@example.test" })],
+    ["verifyAddPhone", () => actions.verifyAddPhone({ phone: "9000000002", code: "123456" })],
+    ["connectGoogle", () => actions.connectGoogle()],
+    ["signOutEverywhere", () => actions.signOutEverywhere()],
+    ["requestAccountDeletion", () => actions.requestAccountDeletion()],
+  ])("%s needs a recent sign-in and changes nothing without one", async (_name, run) => {
+    await expect(run()).resolves.toMatchObject({ ok: false, error: "reauth_required" });
+    expect(updateUser).not.toHaveBeenCalled();
+    expect(linkIdentity).not.toHaveBeenCalled();
+    expect(rpc).not.toHaveBeenCalledWith("record_sign_out_everywhere");
+    expect(signOutCall).not.toHaveBeenCalledWith({ scope: "global" });
+  });
+
+  it("refuses a proof that belongs to another session", async () => {
+    cookieJar.set(
+      "acx_recent",
+      recentToken("another-session", Math.floor(Date.now() / 1000) + 900),
+    );
+    await expect(actions.addPhone({ phone: "9000000002" })).resolves.toMatchObject({
+      error: "reauth_required",
+    });
+  });
+
+  it("issues the proof after a real code sign-in", async () => {
+    await actions.verifyOtp({ channel: "phone", destination: "9000000001", code: "123456" });
+    expect(cookieJar.get("acx_recent")).toMatch(/^sess-1\.\d+\.[0-9a-f]{64}$/);
+  });
+
+  it("sends the re-verify code to the account's own phone, never one from the browser", async () => {
+    await expect(actions.sendReverifyCode({})).resolves.toEqual({ ok: true });
+    expect(signInWithOtp).toHaveBeenCalledWith({
+      phone: "+919000000001",
+      options: { shouldCreateUser: false, channel: "sms" },
+    });
+  });
+
+  it("can use the account's email instead", async () => {
+    await actions.sendReverifyCode({ channel: "email" });
+    expect(signInWithOtp).toHaveBeenCalledWith({
+      email: "a.patient@example.test",
+      options: { shouldCreateUser: false },
+    });
+  });
+
+  it("limits re-verify sends per user", async () => {
+    limitAllows = false;
+    await expect(actions.sendReverifyCode({})).resolves.toEqual({
+      ok: false,
+      error: "rate_limited",
+    });
+    expect(signInWithOtp).not.toHaveBeenCalled();
+  });
+
+  it("verifies, revokes the replaced session and issues a new proof", async () => {
+    await expect(actions.verifyReverifyCode({ code: "123456" })).resolves.toEqual({ ok: true });
+    expect(verifyOtpCall).toHaveBeenCalledWith({
+      phone: "+919000000001",
+      token: "123456",
+      type: "sms",
+    });
+    expect(revokeSessionByToken).toHaveBeenCalledWith("old-access-token");
+    expect(cookieJar.get("acx_recent")).toMatch(/^sess-1\./);
+  });
+
+  it("signs out and fails closed when the code signs in a different user", async () => {
+    verifyOtpCall.mockResolvedValue({
+      data: {
+        session: { access_token: jwt({ session_id: "sess-x" }) },
+        user: { id: "someone-else" },
+      },
+      error: null,
+    });
+    await expect(actions.verifyReverifyCode({ code: "123456" })).resolves.toEqual({
+      ok: false,
+      error: "mismatch",
+    });
+    expect(signOutCall).toHaveBeenCalledWith({ scope: "local" });
+    expect(cookieJar.has("acx_recent")).toBe(false);
+    expect(revokeSessionByToken).not.toHaveBeenCalled();
+  });
+
+  it("gives one message for a wrong re-verify code", async () => {
+    verifyOtpCall.mockResolvedValue({
+      data: { session: null, user: null },
+      error: { code: "otp_expired", status: 403 },
+    });
+    await expect(actions.verifyReverifyCode({ code: "000000" })).resolves.toEqual({
+      ok: false,
+      error: "invalid_or_expired",
+    });
+  });
+
+  it("signs out everywhere after auditing, and clears session cookies", async () => {
+    markRecent();
+    cookieJar.set("acx_profile", "p1");
+    await expect(actions.signOutEverywhere()).resolves.toEqual({ ok: true });
+    expect(rpc).toHaveBeenCalledWith("record_sign_out_everywhere");
+    expect(signOutCall).toHaveBeenCalledWith({ scope: "global" });
+    expect(cookieJar.has("acx_recent")).toBe(false);
+    expect(cookieJar.has("acx_profile")).toBe(false);
+  });
+
+  it("does not sign out everywhere when the audit row cannot be written", async () => {
+    markRecent();
+    rpc.mockResolvedValue({ data: null, error: { code: "42501" } });
+    await expect(actions.signOutEverywhere()).resolves.toEqual({ ok: false, error: "unavailable" });
+    expect(signOutCall).not.toHaveBeenCalledWith({ scope: "global" });
+  });
+
+  it("records a deletion request, then signs out everywhere", async () => {
+    markRecent();
+    await expect(actions.requestAccountDeletion()).resolves.toEqual({ ok: true });
+    expect(rpc).toHaveBeenNthCalledWith(1, "request_account_deletion");
+    expect(rpc).toHaveBeenNthCalledWith(2, "record_sign_out_everywhere");
+  });
+
+  it("cancels a deletion request with a signed-in check only", async () => {
+    await expect(actions.cancelAccountDeletion()).resolves.toEqual({ ok: true });
+    expect(rpc).toHaveBeenCalledWith("cancel_account_deletion");
+  });
+
+  it("signOutAction returns a result instead of redirecting", async () => {
+    markRecent();
+    await expect(actions.signOutAction()).resolves.toEqual({ ok: true });
+    expect(signOutCall).toHaveBeenCalledWith({ scope: "local" });
+    expect(cookieJar.has("acx_recent")).toBe(false);
+    expect(redirect).not.toHaveBeenCalled();
   });
 });

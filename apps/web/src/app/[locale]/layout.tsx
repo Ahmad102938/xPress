@@ -32,6 +32,15 @@ const CLIENT_NAMESPACES = [
   "auth",
   "account",
   "location",
+  // Signed-in experience (docs/specs/signed-in-home.md item 82)
+  "signedIn",
+  "family",
+  "profile",
+  "security",
+  "reverify",
+  "idle",
+  "patientHome",
+  "errors",
 ] as const;
 
 export function generateStaticParams() {

@@ -23,7 +23,35 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "audit_log": {
+            "account_deletion_requests": {
+                  Row: {
+                    "account_id": string,"cancelled_at": string | null,"created_at": string,"id": string,"requested_at": string,"status": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_id": string,"cancelled_at"?: string | null,"created_at"?: string,"id"?: string,"requested_at"?: string,"status"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "account_id"?: string,"cancelled_at"?: string | null,"created_at"?: string,"id"?: string,"requested_at"?: string,"status"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"app_settings": {
+                  Row: {
+                    "created_at": string,"int_value": number | null,"is_public": boolean,"key": string,"text_value": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"int_value"?: number | null,"is_public"?: boolean,"key": string,"text_value"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"int_value"?: number | null,"is_public"?: boolean,"key"?: string,"text_value"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"audit_log": {
                   Row: {
                     "action": string,"actor_id": string | null,"created_at": string,"id": string,"metadata": NonNullable<Json>,"subject_id": string | null,"subject_type": string | null
                   }
@@ -64,6 +92,60 @@ export type Database = {
                   }
                   Relationships: [
                     
+                  ]
+                },"patient_addresses": {
+                  Row: {
+                    "city": string,"created_at": string,"id": string,"is_default": boolean,"label": string,"landmark": string | null,"latitude": number | null,"line1": string,"line2": string | null,"longitude": number | null,"patient_profile_id": string,"pincode": string,"state": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "city": string,"created_at"?: string,"id"?: string,"is_default"?: boolean,"label": string,"landmark"?: string | null,"latitude"?: number | null,"line1": string,"line2"?: string | null,"longitude"?: number | null,"patient_profile_id": string,"pincode": string,"state": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "city"?: string,"created_at"?: string,"id"?: string,"is_default"?: boolean,"label"?: string,"landmark"?: string | null,"latitude"?: number | null,"line1"?: string,"line2"?: string | null,"longitude"?: number | null,"patient_profile_id"?: string,"pincode"?: string,"state"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "patient_addresses_patient_profile_id_fkey"
+      columns: ["patient_profile_id"]
+isOneToOne: false
+      referencedRelation: "patient_profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"patient_profiles": {
+                  Row: {
+                    "archived_at": string | null,"archived_by": string | null,"consultation_language": string | null,"contact_phone": string | null,"created_at": string,"created_by": string | null,"date_of_birth": string | null,"full_name": string,"gender": Database["public"]['Enums']["profile_gender"] | null,"id": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"archived_by"?: string | null,"consultation_language"?: string | null,"contact_phone"?: string | null,"created_at"?: string,"created_by"?: string | null,"date_of_birth"?: string | null,"full_name": string,"gender"?: Database["public"]['Enums']["profile_gender"] | null,"id"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"archived_by"?: string | null,"consultation_language"?: string | null,"contact_phone"?: string | null,"created_at"?: string,"created_by"?: string | null,"date_of_birth"?: string | null,"full_name"?: string,"gender"?: Database["public"]['Enums']["profile_gender"] | null,"id"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"profile_access": {
+                  Row: {
+                    "account_id": string,"created_at": string,"granted_at": string,"id": string,"patient_profile_id": string,"relationship": Database["public"]['Enums']["profile_relationship"],"revoked_at": string | null,"role": Database["public"]['Enums']["profile_access_role"],"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_id": string,"created_at"?: string,"granted_at"?: string,"id"?: string,"patient_profile_id": string,"relationship": Database["public"]['Enums']["profile_relationship"],"revoked_at"?: string | null,"role"?: Database["public"]['Enums']["profile_access_role"],"updated_at"?: string
+                  }
+                  Update: {
+                    "account_id"?: string,"created_at"?: string,"granted_at"?: string,"id"?: string,"patient_profile_id"?: string,"relationship"?: Database["public"]['Enums']["profile_relationship"],"revoked_at"?: string | null,"role"?: Database["public"]['Enums']["profile_access_role"],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "profile_access_patient_profile_id_fkey"
+      columns: ["patient_profile_id"]
+isOneToOne: false
+      referencedRelation: "patient_profiles"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"profiles": {
                   Row: {
@@ -113,14 +195,41 @@ export type Database = {
             [_ in never]: never
           }
           Functions: {
-            "complete_step_up":
+            "actable_profile_ids":
+{ Args: { "p_capability": Database["public"]['Enums']["profile_capability"] }; Returns: string[]
+                           },
+"active_dependent_count":
+{ Args: { "p_account": string }; Returns: number
+                           },
+"archive_dependent":
+{ Args: { "p_profile_id": string }; Returns: undefined
+                           },
+"can_act_for":
+{ Args: { "p_capability": Database["public"]['Enums']["profile_capability"],"p_profile": string }; Returns: boolean
+                           },
+"cancel_account_deletion":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"complete_step_up":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "complete_step_up_server":
 { Args: { "p_session_id": string,"p_user_id": string }; Returns: undefined
                            },
+"create_dependent":
+{ Args: { "p_adult_permission"?: boolean,"p_consultation_language"?: string,"p_contact_phone"?: string,"p_date_of_birth": string,"p_full_name": string,"p_gender"?: Database["public"]['Enums']["profile_gender"],"p_relationship": Database["public"]['Enums']["profile_relationship"] }; Returns: string
+                           },
 "current_session_id":
 { Args: Record<PropertyKey, never>; Returns: string
+                           },
+"delete_patient_address":
+{ Args: { "p_address_id": string }; Returns: undefined
+                           },
+"dependent_cap":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"ensure_self_profile":
+{ Args: { "p_account": string }; Returns: undefined
                            },
 "finish_signup":
 { Args: { "p_full_name": string,"p_marketing": boolean,"p_source": Database["public"]['Enums']["consent_source"] }; Returns: undefined
@@ -131,8 +240,17 @@ export type Database = {
 "has_role":
 { Args: { "p_role": Database["public"]['Enums']["app_role"] }; Returns: boolean
                            },
+"ist_today":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
 "my_auth_state":
 { Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"normalise_person_name":
+{ Args: { "p_name": string }; Returns: string
+                           },
+"raise_profile_error":
+{ Args: { "p_key": string }; Returns: undefined
                            },
 "rate_limit_hit":
 { Args: { "p_key_hash": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
@@ -146,6 +264,21 @@ export type Database = {
 "record_consent":
 { Args: { "p_granted": boolean }; Returns: undefined
                            },
+"record_sign_out_everywhere":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"request_account_deletion":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
+"restore_dependent":
+{ Args: { "p_profile_id": string }; Returns: undefined
+                           },
+"self_profile_id":
+{ Args: { "p_account": string }; Returns: string
+                           },
+"set_default_address":
+{ Args: { "p_address_id": string }; Returns: undefined
+                           },
 "step_up_needed":
 { Args: { "p_cleared": string,"p_last_seen_at": string,"p_session": string }; Returns: boolean
                            },
@@ -155,12 +288,18 @@ export type Database = {
 "unconfirmed_users_older_than":
 { Args: { "p_age": string }; Returns: string[]
                            },
+"update_patient_profile":
+{ Args: { "p_adult_permission"?: boolean,"p_clear"?: (string)[],"p_consultation_language"?: string,"p_contact_phone"?: string,"p_date_of_birth"?: string,"p_full_name"?: string,"p_gender"?: Database["public"]['Enums']["profile_gender"],"p_profile_id": string }; Returns: undefined
+                           },
+"upsert_patient_address":
+{ Args: { "p_address_id"?: string,"p_city": string,"p_clear"?: (string)[],"p_label": string,"p_landmark"?: string,"p_latitude"?: number,"p_line1": string,"p_line2"?: string,"p_longitude"?: number,"p_pincode": string,"p_profile_id": string,"p_state": string }; Returns: string
+                           },
 "write_audit":
 { Args: { "p_action": string,"p_actor_id": string,"p_metadata"?: Json,"p_subject_id": string,"p_subject_type": string }; Returns: undefined
                            }
           }
           Enums: {
-            "app_role": "patient"|"clinic_admin"|"clinic_staff"|"doctor"|"pharmacy_staff"|"shop_partner"|"delivery_partner"|"support"|"admin","consent_source": "phone"|"email"|"google"|"profile","consent_type": "terms_privacy"|"marketing"
+            "app_role": "patient"|"clinic_admin"|"clinic_staff"|"doctor"|"pharmacy_staff"|"shop_partner"|"delivery_partner"|"support"|"admin","consent_source": "phone"|"email"|"google"|"profile","consent_type": "terms_privacy"|"marketing","profile_access_role": "owner","profile_capability": "read"|"manage"|"book"|"view_records","profile_gender": "female"|"male"|"other"|"prefer_not_to_say","profile_relationship": "self"|"child"|"parent"|"spouse"|"sibling"|"grandparent"|"other"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -280,7 +419,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "app_role": ["patient", "clinic_admin", "clinic_staff", "doctor", "pharmacy_staff", "shop_partner", "delivery_partner", "support", "admin"],"consent_source": ["phone", "email", "google", "profile"],"consent_type": ["terms_privacy", "marketing"]
+            "app_role": ["patient", "clinic_admin", "clinic_staff", "doctor", "pharmacy_staff", "shop_partner", "delivery_partner", "support", "admin"],"consent_source": ["phone", "email", "google", "profile"],"consent_type": ["terms_privacy", "marketing"],"profile_access_role": ["owner"],"profile_capability": ["read", "manage", "book", "view_records"],"profile_gender": ["female", "male", "other", "prefer_not_to_say"],"profile_relationship": ["self", "child", "parent", "spouse", "sibling", "grandparent", "other"]
           }
         }
 } as const

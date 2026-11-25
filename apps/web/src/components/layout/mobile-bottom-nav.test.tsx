@@ -29,3 +29,24 @@ describe("MobileBottomNav", () => {
     expect(account).not.toHaveAttribute("aria-current");
   });
 });
+
+describe("MobileBottomNav: signed-in tabs", () => {
+  const hrefs = () => screen.getAllByRole("link").map((a) => a.getAttribute("href"));
+
+  it("shows Home, Find care, Appointments, Shops and Account", () => {
+    renderWithIntl(<MobileBottomNav variant="patient" showShops />);
+    expect(hrefs()).toEqual(["/", "/doctors", "/appointments", "/shops", "/account"]);
+    expect(screen.getByRole("link", { name: "Find care" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("adds Medicines only when medicine sales are on", () => {
+    renderWithIntl(<MobileBottomNav variant="patient" showShops showMedicines />);
+    expect(hrefs()).toEqual(["/", "/doctors", "/appointments", "/medicines", "/shops", "/account"]);
+  });
+
+  it("hides Shops when the shop network is off", () => {
+    renderWithIntl(<MobileBottomNav variant="patient" showShops={false} />);
+    expect(hrefs()).not.toContain("/shops");
+  });
+});

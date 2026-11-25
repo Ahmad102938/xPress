@@ -12,6 +12,10 @@ describe("maskEmail", () => {
     expect(maskEmail("test@example.test")).toBe("t•••@example.test");
   });
 
+  it("shows no character of a one-character local part", () => {
+    expect(maskEmail("a@example.test")).toBe("•@example.test");
+  });
+
   it("fully masks a value without a local part", () => {
     expect(maskEmail("@example.test")).toBe("•••");
     expect(maskEmail("no-at-sign")).toBe("•••");

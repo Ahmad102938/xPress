@@ -154,8 +154,10 @@ select set_config('request.jwt.claims', '{"sub":"22222222-2222-4222-8222-2222222
 select lives_ok($$ select public.record_consent(false) $$, 'recording the same marketing choice is accepted');
 select is((select count(*)::int from public.consents where consent_type = 'marketing'), 1, 'an unchanged marketing choice writes no row');
 select lives_ok($$ select public.record_consent(true) $$, 'changing the marketing choice is accepted');
+-- Both marketing rows share one now() inside this transaction, so ordering by created_at (then a
+-- random uuid) was flaky. Assert the new row directly: exactly one profile-sourced row, granted.
 select results_eq(
-  $$ select granted, source::text from public.consents where consent_type = 'marketing' order by created_at desc, id desc limit 1 $$,
+  $$ select granted, source::text from public.consents where consent_type = 'marketing' and source = 'profile' $$,
   $$ values (true, 'profile') $$,
   'the new marketing row uses the profile source'
 );
@@ -261,6 +263,16 @@ select throws_ok(
   '42501', null, 'consents cannot be changed, even by the owner role'
 );
 
+-- Since the patient-profiles migration, finish_signup also creates a self patient profile and an
+-- owner grant, and those keys use ON DELETE RESTRICT (no silent loss of family data). Remove that
+-- user's patient-profile rows first, as an operator would, so this test keeps checking what it is
+-- about: consents survive a user deletion. The restrict itself is tested in 03_patient_profiles.
+delete from public.patient_addresses where patient_profile_id in
+  (select patient_profile_id from public.profile_access where account_id = '11111111-1111-4111-8111-111111111111');
+create temporary table _a_profiles on commit drop as
+  select patient_profile_id from public.profile_access where account_id = '11111111-1111-4111-8111-111111111111';
+delete from public.profile_access where account_id = '11111111-1111-4111-8111-111111111111';
+delete from public.patient_profiles where id in (select patient_profile_id from _a_profiles);
 delete from auth.users where id = '11111111-1111-4111-8111-111111111111';
 select is(
   (select count(*)::int from public.consents where user_id is null),

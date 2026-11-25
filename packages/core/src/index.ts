@@ -4,7 +4,9 @@ export { formatInr } from "./format";
 export type { BadgeType } from "./doctor";
 export { maskPhone, normalizeIndianPhone } from "./phone";
 export { maskEmail, normalizeEmail } from "./email";
-export { sanitizeNextPath } from "./next-path";
+export { safeReturnPath, sanitizeNextPath } from "./next-path";
+export { firstName, greetingFor, type GreetingPart } from "./greeting";
+export { SESSION_IDLE_DEFAULT_MINUTES, idleWarningLeadMs, parseMinutes } from "./session-config";
 export {
   AUTH_METHOD_IDS,
   AUTH_METHOD_REGISTRY,
@@ -13,11 +15,13 @@ export {
   type AuthMethodId,
 } from "./auth-methods";
 export {
+  ACCOUNT_SECURITY_ERRORS,
   AUTH_ERROR,
   PROFILE_ERRORS,
   SIGN_IN_ERRORS,
   isSilentSendSuccess,
   mapSupabaseAuthError,
+  type AccountSecurityErrorKey,
   type AuthErrorContext,
   type AuthErrorKey,
   type ProfileErrorKey,
@@ -45,3 +49,24 @@ export {
   isPlaceholderLegalVersion,
   type LegalDocument,
 } from "./legal";
+export {
+  DEPENDENT_RELATIONSHIPS,
+  PATIENT_PROFILE_ERROR,
+  PROFILE_GENDERS,
+  PROFILE_RELATIONSHIPS,
+  addressInput,
+  addressUpsertInput,
+  contactPhoneSchema,
+  dateOfBirthSchema,
+  dependentInput,
+  isMinor,
+  istDate,
+  mapPatientProfileError,
+  profileUpdateInput,
+  uuidSchema,
+  type AddressInput,
+  type DependentInput,
+  type PatientProfileErrorKey,
+  type ProfileGender,
+  type ProfileRelationship,
+} from "./patient-profile";

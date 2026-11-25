@@ -19,9 +19,21 @@ export function missingProductionEnv(env: Record<string, string | undefined>): s
   return REQUIRED_PRODUCTION_ENV.filter((name) => !env[name]?.trim());
 }
 
+/** Env that must never be set on a Vercel production build (docs/specs/signed-in-home.md item 58). */
+export const FORBIDDEN_PRODUCTION_ENV = ["PATIENT_HOME_FIXTURES"] as const;
+
+export function forbiddenProductionEnv(env: Record<string, string | undefined>): string[] {
+  if (env.VERCEL_ENV !== "production") return [];
+  return FORBIDDEN_PRODUCTION_ENV.filter((name) => Boolean(env[name]?.trim()));
+}
+
 export function assertProductionEnv(env: Record<string, string | undefined> = process.env): void {
   const missing = missingProductionEnv(env);
   if (missing.length > 0) {
     throw new Error(`Production build is missing required env: ${missing.join(", ")}`);
+  }
+  const forbidden = forbiddenProductionEnv(env);
+  if (forbidden.length > 0) {
+    throw new Error(`Production build must not set: ${forbidden.join(", ")}`);
   }
 }

@@ -1,10 +1,11 @@
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import { mapSupabaseAuthError, sanitizeNextPath, type AuthErrorKey } from "@acurexpress/core";
+import { mapSupabaseAuthError, safeReturnPath, type AuthErrorKey } from "@acurexpress/core";
 import { hasSupabaseEnv } from "@acurexpress/db";
 import { createClient } from "@acurexpress/db/server";
 import { authState } from "@/features/auth/server/auth-state";
 import { methodCookie } from "@/features/auth/server/method-cookie";
+import { markRecentAuth, sessionIdFromToken } from "@/features/auth/server/recent-auth";
 import { routing } from "@/i18n/routing";
 import { logAuthEvent } from "@/lib/log";
 import { siteUrl } from "@/lib/site-url";
@@ -15,7 +16,8 @@ import { siteUrl } from "@/lib/site-url";
  * - Sign-in: back to the sanitised `next`, opening the panel at Finish sign-up or step-up when
  *   needed (a Google session clears its own step-up first), or with `?login=1&error=` on failure.
  * - Link (`flow=link`): back to Profile with `?link=google | in_use_google | cancelled | unavailable`.
- * Every redirect is built from NEXT_PUBLIC_SITE_URL, never the Host header.
+ * Every redirect is built from NEXT_PUBLIC_SITE_URL, never the Host header. `next` goes through
+ * safeReturnPath, so a record id never comes back in it (docs/specs/signed-in-home.md item 46).
  */
 
 function to(path: string, params: Record<string, string> = {}): NextResponse {
@@ -27,7 +29,7 @@ function to(path: string, params: Record<string, string> = {}): NextResponse {
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const isLink = params.get("flow") === "link";
-  const next = sanitizeNextPath(params.get("next"), routing.locales);
+  const next = safeReturnPath(params.get("next"), routing.locales);
   const profile = next === "/" ? "/account" : next;
 
   function failed(error: AuthErrorKey | null) {
@@ -49,7 +51,7 @@ export async function GET(request: NextRequest) {
   if (!code || !hasSupabaseEnv()) return failed("unavailable");
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  const { data: exchanged, error } = await supabase.auth.exchangeCodeForSession(code);
   if (error) return failed(mapSupabaseAuthError(error, isLink ? "profile" : "oauth"));
 
   if (isLink) {
@@ -59,6 +61,8 @@ export async function GET(request: NextRequest) {
 
   const cookie = methodCookie("google");
   (await cookies()).set(cookie.name, cookie.value, cookie.options);
+  // A real Google sign-in (not link mode): issue the recent sign-in proof for this new session.
+  await markRecentAuth(supabase, sessionIdFromToken(exchanged.session?.access_token));
 
   let auth = await authState(supabase);
   if (auth.state === "step_up") {

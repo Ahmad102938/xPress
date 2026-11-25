@@ -34,6 +34,58 @@ section win over the plan text). Database rules: `docs/SUPABASE.md`. Permissions
 - **Logging**: `apps/web/src/lib/log.ts` writes allow-listed fields only (event, method, outcome, locale,
   request id, count). Never codes, phones, emails, tokens, return paths or user ids.
 
+## 1a. Signed-in experience (docs/specs/signed-in-home.md)
+
+- **"/" serves two pages.** `proxy.ts` verifies the session cookie with `getClaims()` (a routing hint
+  only) and rewrites "/" to the internal `/home` page; the URL stays "/". `/home` checks the user
+  again with `getUser()` and shows the public home for an invalid session. A direct `/home` request
+  is redirected to "/". A cookie that Auth rejects (4xx, bad JWT) is deleted in the proxy, keeping
+  the PKCE `-code-verifier`; a network or 5xx failure keeps the cookies (an outage signs no one out).
+- **Private routes** (`/appointments`, `/appointments/[id]`, `/profile`, `/account`, `/support`,
+  `/home`) are rendered per request (`instant = false` + `connection()`), sent with
+  `Cache-Control: private, no-store`, `X-Robots-Tag: noindex` and a **per-request nonce CSP** with
+  `'strict-dynamic'` and no `'unsafe-inline'` for scripts. Public pages stay prerendered and use
+  `script-src 'self' 'unsafe-inline'` (owner-approved; Next's page data is inline and a static page
+  has no nonce). Turnstile is the only third-party script. Reports go to `/api/csp-report`.
+- **Signed-out access** still goes to `/login?next=`; `safeReturnPath` removes any record id from
+  `next` (`/appointments/<id>` returns to `/appointments`).
+- **Known gap:** `/appointments/[id]` for an unknown or someone else's id shows the not-found page
+  with HTTP **200**, because the check runs after streaming starts under `cacheComponents`.
+- **Recent sign-in (15 min, `app_settings.recent_auth_minutes`, TODO_HCQ)** protects add or change
+  phone, add or change email, connect Google, sign out everywhere and the deletion request.
+  Step 0 showed that verifying a `phone_change` code writes a fresh `amr` timestamp, so the JWT
+  cannot prove a recent sign-in. The server therefore issues its own proof after a real sign-in or
+  re-verify: an httpOnly cookie `acx_recent = <session_id>.<expiry>.<hmac>` (HMAC with
+  `RATE_LIMIT_HMAC_SECRET`, prefix `recent:`). Contact changes never set it.
+  - **Gap:** the database functions for sign out everywhere and the deletion request check only that
+    the caller is signed in; the recent check is in the server action. Someone holding valid tokens
+    could call Supabase Auth's `updateUser` or global sign-out directly. `double_confirm_changes`
+    (secure email change) and a shorter `jwt_expiry` on staging and production (recommend 900 s)
+    reduce this.
+- **Re-verify dialog** sends a code to the account's OWN confirmed phone (default) or email, never
+  one typed in the browser, with `shouldCreateUser: false`; the new session must be the same user
+  (else sign out, fail closed); the replaced session is revoked with
+  `POST /auth/v1/logout?scope=local` and its own token (no service role); other devices stay signed
+  in. **Google re-verify is not offered:** Google cannot be forced to ask for the password again
+  (no `prompt=login`; `max_age=0` was not testable locally), so Google accounts re-verify by an
+  email code to their Google email.
+- **Sign out** (this device) and **sign out everywhere** both end by clearing device state (`acx:`
+  storage keys, session cookies `acx_recent`, `acx_profile`, `acx_auth_method`) and loading a fresh
+  document. A `pageshow` guard and a `BroadcastChannel` cover Back after sign-out and other tabs.
+- **Idle sign-out** (client, `SESSION_IDLE_MINUTES`, default 30, TODO_HCQ) warns
+  `min(2 min, timeout/4)` before signing out. It is a convenience, not the security boundary.
+  **Server-side session time-boxes and inactivity timeouts are a Supabase Pro setting**
+  (Auth > Sessions); they are not assumed here and must be set by the project lead if HCQ wants them.
+- **Family profiles:** one login, many patient profiles (`patient_profiles` + `profile_access`). The
+  selected profile is the httpOnly cookie `acx_profile` (a UI preference, checked through RLS on
+  every request; invalid or archived falls back to self with a notice). Every action names its
+  profile explicitly. Dependents never sign in themselves (owner decision; proposed D22).
+- **Service role near the patient area:** only the existing rate limiter
+  (`features/auth/server/limiter.ts` -> `rate_limit_hit` with HMAC keys; no patient rows). Patient
+  data is always read and written with the user's own session.
+- **Audit:** `patient_profile.*`, `patient_address.*`, `account.deletion_requested|cancelled` and
+  `session.sign_out_all` rows carry ids and field names only.
+
 ## 2. Environment variables
 
 | Variable | Where | Notes |
@@ -45,6 +97,8 @@ section win over the plan text). Database rules: `docs/SUPABASE.md`. Permissions
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | web | Unset = no captcha widget |
 | `RATE_LIMIT_HMAC_SECRET` | web, server only | Required on Vercel |
 | `CRON_SECRET` | web, server only | Bearer secret for `/api/cron/auth-cleanup` (Vercel cron, `apps/web/vercel.json`, needed for the daily cleanup cron) |
+| `SESSION_IDLE_MINUTES` | web | Client idle sign-out minutes (1-1440, default 30, TODO_HCQ) |
+| `PATIENT_HOME_FIXTURES` | web, development only | `1` shows the full signed-in home with fake data under `next dev`. Ignored by production builds; a Vercel production build fails if set |
 | `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID`, `..._SECRET`, `SUPABASE_AUTH_CAPTCHA_SECRET` | `supabase/.env` | Local CLI only, git-ignored |
 
 **Warning:** Next.js loads `apps/web/.env` in every mode. Keep local development pointed at the
@@ -115,6 +169,9 @@ Run on the local stack with Google configured, or on staging. Use test Google ac
 - [ ] Asymmetric JWT signing keys switched on in each project.
 - [ ] D4 processor register: Google (OAuth), Brevo (email), MSG91 (SMS, later), Cloudflare (Turnstile).
 - [ ] Proposed decision D21 applied to the Product Context by the project lead.
+- [ ] Proposed decision D22 (family profiles, shared credentials vs G8/D8, DPDP consent) decided.
+- [ ] `jwt_expiry` shortened (recommend 900 s) on staging and production; Supabase Pro session
+      time-box and inactivity timeout set if HCQ wants them.
 
 ## 7. Known gaps
 

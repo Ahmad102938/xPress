@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { assertProductionEnv, missingProductionEnv, REQUIRED_PRODUCTION_ENV } from "./env-check";
+import {
+  assertProductionEnv,
+  forbiddenProductionEnv,
+  missingProductionEnv,
+  REQUIRED_PRODUCTION_ENV,
+} from "./env-check";
 
 const complete = Object.fromEntries(REQUIRED_PRODUCTION_ENV.map((name) => [name, "set"]));
 
@@ -40,5 +45,20 @@ describe("assertProductionEnv", () => {
         AUTH_METHODS: "phone,email,google",
       }),
     ).not.toThrow();
+  });
+});
+
+describe("forbidden production env (signed-in-home item 58)", () => {
+  const production = { ...complete, VERCEL_ENV: "production" };
+
+  it("fails a Vercel production build that enables the dev fixtures", () => {
+    expect(() => assertProductionEnv({ ...production, PATIENT_HOME_FIXTURES: "1" })).toThrow(
+      /PATIENT_HOME_FIXTURES/,
+    );
+  });
+
+  it("passes without it, and ignores it outside Vercel production", () => {
+    expect(() => assertProductionEnv(production)).not.toThrow();
+    expect(forbiddenProductionEnv({ PATIENT_HOME_FIXTURES: "1" })).toEqual([]);
   });
 });

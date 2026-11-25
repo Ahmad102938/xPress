@@ -122,3 +122,21 @@ describe("initialsOf", () => {
     expect(initialsOf(name)).toBe(expected);
   });
 });
+
+describe("authState: gate unavailable", () => {
+  it("returns unavailable, not needs_finish, when the gate RPC fails", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:54321");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "test-anon-key");
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    rpc.mockImplementation(async (name: string) =>
+      name === "my_auth_state"
+        ? { data: null, error: { code: "57P01" } }
+        : { data: null, error: null },
+    );
+    const auth = await authState();
+    expect(auth.state).toBe("unavailable");
+    expect(error.mock.calls.flat().join(" ")).toMatch(/57P01/);
+    expect(error.mock.calls.flat().join(" ")).not.toMatch(/a\.patient/);
+    error.mockRestore();
+  });
+});

@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import {
   deleteTestUsers,
   emailCode,
+  gotoReady,
   logOut,
   resetLimits,
   signUpWithEmail,
@@ -20,7 +21,7 @@ test.afterAll(async () => {
 });
 
 async function addPhone(page: Page, phone: string) {
-  await page.goto("/account");
+  await gotoReady(page, "/account");
   await page.getByRole("button", { name: "Add mobile number" }).click();
   await page.getByLabel("Mobile number").fill(phone);
   await page.getByRole("button", { name: "Send code" }).click();
@@ -32,7 +33,11 @@ test("T3: an email account adds a free phone after the code", async ({ page }) =
   await page.getByLabel(/Enter the 6-digit code/).fill(TEST_CODE);
   await page.getByRole("button", { name: "Verify code" }).click();
   await expect(page.getByRole("status")).toContainText("Mobile number added.");
-  await expect(page.getByText(`+91${TEST_PHONES[1]}`)).toBeVisible();
+  // Shown masked (signed-in-home item 43): the country code and the last four digits only.
+  await expect(
+    page.getByRole("main").getByText(`+91 •••••• ${TEST_PHONES[1].slice(-4)}`),
+  ).toBeVisible();
+  await expect(page.getByText(`+91${TEST_PHONES[1]}`)).toHaveCount(0);
 });
 
 test("T4: a taken phone shows 'already in use' and changes nothing", async ({ page }) => {
@@ -44,13 +49,15 @@ test("T4: a taken phone shows 'already in use' and changes nothing", async ({ pa
     "This number is already in use.",
   );
   await page.reload();
-  await expect(page.getByRole("button", { name: "Add mobile number" })).toBeVisible();
+  await expect(
+    page.getByRole("main").getByRole("button", { name: "Add mobile number" }),
+  ).toBeVisible();
 });
 
 test("T5: a phone account adds a free email after verification", async ({ page }) => {
   const email = uniqueEmail("t5");
   await signUpWithPhone(page, TEST_PHONES[3], "Phone Five");
-  await page.goto("/account");
+  await gotoReady(page, "/account");
   await page.getByRole("button", { name: "Add email" }).click();
   await page.getByLabel("Email").fill(email);
   await page.getByRole("button", { name: "Send code" }).click();
@@ -68,7 +75,7 @@ test("T6: a phone account adding a taken email gets 'already in use', no merge",
   await signUpWithEmail(page, taken, "Email Owner");
   await logOut(page, "Email Owner");
   await signUpWithPhone(page, TEST_PHONES[4], "Phone Six");
-  await page.goto("/account");
+  await gotoReady(page, "/account");
   await page.getByRole("button", { name: "Add email" }).click();
   await page.getByLabel("Email").fill(taken);
   await page.getByRole("button", { name: "Send code" }).click();
@@ -96,5 +103,7 @@ test("T8: a raced phone change never attaches the number to the wrong user (CUJ 
   await page.getByRole("button", { name: "Verify code" }).click();
   await expect(page.getByRole("main").getByRole("alert")).toBeVisible();
   await page.reload();
-  await expect(page.getByRole("button", { name: "Add mobile number" })).toBeVisible();
+  await expect(
+    page.getByRole("main").getByRole("button", { name: "Add mobile number" }),
+  ).toBeVisible();
 });

@@ -1,5 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 import { createAdminClient } from "@acurexpress/db/admin";
+import { purgeTestUsers } from "./local-db";
 
 /**
  * Helpers for the auth e2e suite (LOCAL stack only): Mailpit code reader, service-role checks,
@@ -29,19 +30,13 @@ export async function resetLimits() {
   if (error) throw new Error("rate_limits reset failed");
 }
 
-/** Deletes users created by this suite: example.test emails and the test phone numbers. */
+/**
+ * Deletes users created by this suite (example.test emails and the test phone numbers) with their
+ * patient-profile rows, through the local database container (local-db.ts). Fails loudly: a user
+ * left behind would break the next run.
+ */
 export async function deleteTestUsers() {
-  const client = admin();
-  const phones = new Set(TEST_PHONES.map((phone) => `91${phone}`));
-  for (let page = 1; page < 20; page += 1) {
-    const { data, error } = await client.auth.admin.listUsers({ page, perPage: 200 });
-    if (error) throw new Error("listUsers failed");
-    const doomed = data.users.filter(
-      (user) => user.email?.endsWith("@example.test") || (user.phone && phones.has(user.phone)),
-    );
-    for (const user of doomed) await client.auth.admin.deleteUser(user.id);
-    if (data.users.length < 200) break;
-  }
+  purgeTestUsers();
 }
 
 /** The 6-digit code mailed to `email` (local Mailpit); each message is read once, then deleted. */
@@ -98,6 +93,34 @@ export async function openPanel(page: Page, path = "/") {
   await expect(panel(page)).toBeVisible();
 }
 
+/** True at the md breakpoint and up, where the header shows the avatar menu. */
+export function isDesktop(page: Page) {
+  return (page.viewportSize()?.width ?? 1280) >= 768;
+}
+
+/**
+ * Navigates and waits until the page is idle, so React has hydrated before the test clicks.
+ * Private pages render per request and stream, so a click right after `goto` can land on server
+ * HTML that has no handler yet.
+ */
+export async function gotoReady(page: Page, url: string) {
+  await page.goto(url);
+  await page.waitForLoadState("networkidle");
+}
+
+/** After a sign-in completes: the panel closes and the client navigation settles. */
+async function settledSignedIn(page: Page, name: string) {
+  await expect(panel(page)).toBeHidden();
+  await page.waitForLoadState("networkidle");
+  if (isDesktop(page))
+    await expect(page.getByRole("button", { name: menuName(name) })).toBeVisible();
+}
+
+/** The header menu is labelled with the first name only (signed-in-home item 56). */
+export function menuName(name: string) {
+  return `Account menu for ${name.trim().split(/\s+/)[0]}`;
+}
+
 export async function signUpWithEmail(page: Page, email: string, name = "Test Patient") {
   await openPanel(page);
   const dialog = panel(page);
@@ -109,7 +132,7 @@ export async function signUpWithEmail(page: Page, email: string, name = "Test Pa
   await dialog.getByLabel("Full name").fill(name);
   await dialog.getByRole("checkbox", { name: /I am 18 or older/ }).check();
   await dialog.getByRole("button", { name: "Finish sign-up" }).click();
-  await expect(page.getByRole("button", { name: `Account menu for ${name}` })).toBeVisible();
+  await settledSignedIn(page, name);
 }
 
 export async function signUpWithPhone(page: Page, phone: string, name = "Phone Patient") {
@@ -122,11 +145,13 @@ export async function signUpWithPhone(page: Page, phone: string, name = "Phone P
   await dialog.getByLabel("Full name").fill(name);
   await dialog.getByRole("checkbox", { name: /I am 18 or older/ }).check();
   await dialog.getByRole("button", { name: "Finish sign-up" }).click();
-  await expect(page.getByRole("button", { name: `Account menu for ${name}` })).toBeVisible();
+  await settledSignedIn(page, name);
 }
 
+/** Signs out from the avatar menu: the session ends, device state clears, a fresh "/" loads. */
 export async function logOut(page: Page, name: string) {
-  await page.getByRole("button", { name: `Account menu for ${name}` }).click();
-  await page.getByRole("button", { name: "Log out" }).click();
+  await page.waitForLoadState("networkidle");
+  await page.getByRole("button", { name: menuName(name) }).click();
+  await page.getByRole("menuitem", { name: "Log out" }).click();
   await expect(page.getByRole("banner").getByRole("link", { name: /Login/ })).toBeVisible();
 }

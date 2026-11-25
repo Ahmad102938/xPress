@@ -13,6 +13,36 @@ export {
   SheetTrigger,
   type SheetContentProps,
 } from "./components/sheet";
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+  type DialogContentProps,
+} from "./components/dialog";
+export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./components/alert-dialog";
+export { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "./components/popover";
+export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./components/dropdown-menu";
 
 export { Logo } from "./brand/logo";
 export { DoctorBadge, RegisteredBadge, VerifiedBadge } from "./brand/verification-badge";

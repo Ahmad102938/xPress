@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { AUTH_ERROR, sanitizeNextPath, type AuthErrorKey } from "@acurexpress/core";
+import { AUTH_ERROR, safeReturnPath, type AuthErrorKey } from "@acurexpress/core";
 import { hasSupabaseEnv } from "@acurexpress/db";
 import { getAuthMethods } from "@/config/auth-methods";
 import { LoginPagePanel } from "@/features/auth/components/login-page-panel";
@@ -31,7 +31,7 @@ async function LoginContent({
   searchParams: PageProps<"/[locale]/login">["searchParams"];
 }) {
   const params = await searchParams;
-  const next = sanitizeNextPath(first(params.next), routing.locales);
+  const next = safeReturnPath(first(params.next), routing.locales);
   const auth = await authState();
   if (auth.state === "signed_in") redirect(next);
 
@@ -47,7 +47,7 @@ async function LoginContent({
       start={start}
       next={next}
       initialError={initialError}
-      unavailable={!hasSupabaseEnv()}
+      unavailable={!hasSupabaseEnv() || auth.state === "unavailable"}
     />
   );
 }
